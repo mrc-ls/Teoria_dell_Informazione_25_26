@@ -1,0 +1,217 @@
+\section{Sorgenti con Memoria e Trasformazioni dei Dati}
+Nelle sorgenti discrete \textbf{con memoria}, la probabilità di emissione di un simbolo in un dato istante non è indipendente, ma è condizionata dalla sequenza degli $n$ simboli emessi in precedenza. Questa dipendenza \textit{statistica} costituisce una forma di ridondanza intrinseca che i compressori possono sfruttare per massimizzare l'efficienza della codifica. 
+Mentre la famiglia dei compressori a dizionario sfrutta questa memoria in modo indiretto tramite la ricerca di pattern ricorrenti, in questo capitolo analizzeremo tecniche e trasformazioni che manipolano attivamente i dati per isolare e abbattere esplicitamente l'entropia condizionata.
+
+\subsection{Sorgenti con Memoria}
+Si definisce sorgente discreta con memoria una sorgente caratterizzata dalle seguenti proprietà:
+\begin{itemize}
+    \item $\exists\space m \in \mathbb{N}$ tale che la probabilità del simbolo in uscita dipende \textbf{al più} dalla sequenza degli \textbf{$m$ simboli emessi in precedenza}.
+    \item $m$ è il minimo numero intero per cui tale proprietà è verificata ed è detto \textbf{memoria di $S$}.
+    \item Emette simboli da un insieme di $M$ simboli $X=\{x_1, x_2,\dots, x_M\}$, ciascuno caratterizzato dalla propria probabilità $p_i$ e auto-informazione $I_i$.
+    \item Le probabilità $p_i$ non dipendono dal tempo (sorgente \textbf{stazionaria}).
+    \item I simboli emessi dalla sorgente in istanti differenti sono correlati. La probabilità che venga emesso il simbolo $x_i$ dipende dalla sequenza di simboli $x$ emessa precedentemente:
+    \[P(x_i \mid x) \neq P(x_i)\]
+\end{itemize}
+
+\paragraph{Ordine della memoria}
+Definiamo \textbf{ordine della memoria} della sorgente il numero di simboli precedentemente emessi che influenzano la probabilità di emissione del simbolo corrente.
+Una sorgente con memoria di \textbf{primo ordine} ha la probabilità del simbolo emesso dipendente solo dal simbolo precedente ($x_j$):
+\[P(x_i \mid x) = P(x_i \mid x_j)\]
+
+\subsubsection{Calcolo dell'Entropia}
+Data una sorgente $X$ con memoria di primo ordine, si può definire la sua entropia \textbf{condizionata} al simbolo $x_j$ come:
+\[H(X \mid x_j) = \sum_{i=1}^M P(x_i \mid x_j)\log_2\left(\frac{1}{P(x_i \mid x_j)}\right)\]
+Facendo la media su tutti i possibili simboli $x_j$ si ottiene:
+\[H(X) = \sum_{j=1}^M P(x_j)H(X \mid x_j)\]
+Questa formula è valida solamente per il caso di memoria di primo ordine.
+
+\subsection{Codifica Predittiva}
+Consapevoli di avere una sorgente con memoria, si può trarre vantaggio di questo fatto per implementare una codifica.
+
+Un metodo diretto per sfruttare la memoria di una sorgente consiste nell'utilizzare un meccanismo di \textbf{codifica predittiva}. L'obiettivo è realizzare un sistema in grado di \textit{anticipare} l'emissione dei simboli basandosi sulla storia passata.
+
+%TODO: aggiungere grafico codifica predittiva
+Il sistema si basa sul confronto tra il bit reale $x(i)$ e il bit predetto $\tilde{x}(i)$. Il loro sommatore modulo-2 genera una sequenza errore $\epsilon(i)$ che viene fornita in ingresso al codificatore a valle. 
+Se si utilizza un \textbf{\textit{buon predittore}}, le predizioni esatte saranno molto frequenti, generando nella sequenza $\epsilon(i)$ una netta prevalenza di bit \texttt{0} rispetto ai bit \texttt{1}.
+
+Di conseguenza, essendo la probabilità dei simboli fortemente sbilanciata, l'entropia di questa \textit{sequenza errore} risulta estremamente bassa. Il codificatore potrà quindi rappresentarla producendo parole di codice molto corte, abbassando il \textit{bit rate}.
+
+
+\subsection{Entropia Empirica}
+Spesso l'entropia di ordine zero non è abbastanza accurata per misurare le performance di un compressore. Per questo motivo, si definiscono entropie empiriche di ordine superiore che permettono di sfruttare la conoscenza del contesto, valutando la dipendenza delle frequenze dai simboli adiacenti.
+
+\subsubsection{Entropia empirica di ordine zero}
+L'entropia empirica di ordine zero è basata sulla distribuzione di probabilità implicitamente definita dall'input. Dato un input $s$ di lunghezza $n$ basato su un alfabeto di $h$ simboli, indichiamo con $n_i$ il numero di occorrenze del simbolo $i$-esimo. Assumendo convenzionalmente che $0 \log_2 0 = 0$, si definisce:
+\[H_0(s) = -\sum_{i=1}^h \frac{n_i}{n} \log_2 \left(\frac{n_i}{n}\right)\]
+Il termine $\frac{n_i}{n}$ rappresenta la probabilità empirica del simbolo. Il valore $|s|H_0(s)$ rappresenta la taglia dell'output di un compressore ideale che impiega $-\log_2\left(\frac{n_i}{n}\right)$ bit per codificare l'i-esimo simbolo. Compressori basati su un modello di ordine zero (come la codifica di Huffman o la codifica Aritmetica) producono un output la cui dimensione si avvicina molto a questo limite teorico.
+
+\subsubsection{Entropia empirica di ordine k}
+Se si considera un contesto di lunghezza $k$, l'entropia empirica viene calcolata sulle sottostringhe che seguono (o precedono) specifici pattern. Si definisce come:
+\[H_k(s) = \frac{1}{|s|} \sum_{w \in \Sigma^k} |w_s| H_0(w_s)\]
+dove $w_s$ è una stringa costituita dalla concatenazione di tutti i simboli che seguono l'occorrenza della parola $w$ all'interno di $s$. 
+La grandezza $|s|H_k(s)$ rappresenta un \textit{lower bound} per le prestazioni di un compressore con memoria $k$. Poiché all'aumentare del contesto si hanno statistiche sempre più precise, $H_k(s)$ è una funzione non crescente rispetto a $k$, ovvero $H_{k+1}(s) \le H_k(s)$.
+
+
+\subsection{Trasformata di Burrows-Wheeler}
+La trasformata di Burrows-Wheeler è un algoritmo di compressione lossless che, nelle parole dei due autori:
+\begin{quote}
+``\dots opera  applicando una trasformazione reversibile a un blocco di testo in input. La trasformazione in se non comprime il testo, ma lo riordina in modo da renderlo più facile da comprimere con semplici algoritmi come la codifica move-to-front. L'algoritmo raggiunge velocità comparabili alle tecniche di Lempel e Ziv, ma ottiene una compressione comparabile ai migliori modelli statistici. La dimensione del blocco in input deve essere grande (qualche kilobyte) per ottenere una buona compressione.''
+\end{quote}
+
+L'aspetto da sottolineare è che la trasformata rappresenta solo il primo passo di un processo di compressione. Più nel dettaglio, la BWT applica una permutazione reversibile alla stringa originale costruendo, ordinando lessicograficamente e manipolando tutte le sue \textbf{rotazioni cicliche}.
+
+\subsubsection{Rotazioni cicliche}
+Una rotazione ciclica (o shift circolare) è una specifica permutazione degli elementi di una sequenza in cui i caratteri vengono spostati mantenendo inalterato il loro ordine relativo. A differenza delle permutazioni generiche, che per una stringa di $n$ caratteri generano $n!$ disposizioni, le rotazioni cicliche possibili per una parola di lunghezza $n$ sono esattamente $n$.
+
+In termini più formali, si consideri una parola $v$. Una parola $u$ viene definita sua \textbf{coniugata} (ovvero sua \textbf{rotazione ciclica}) se esiste una scomposizione tale che:
+\[ u = xy \quad \land \quad v = yx \]
+\begin{center}
+    \input{parte3/tabella_rotazione}
+\end{center}
+
+\subsubsection{Codifica BWT}
+Dato un testo $s$ di lunghezza $n$, l'algoritmo di codifica si articola nei seguenti passaggi:
+
+\begin{enumerate}
+    \item \textbf{Generazione delle rotazioni:} Si costruisce una matrice $M$ di dimensione $n \times n$, le cui righe corrispondono a tutte le $n$ possibili rotazioni cicliche della stringa $s$.
+    \item \textbf{Ordinamento lessicografico:} Le righe della matrice $M$ vengono ordinate alfabeticamente, generando una nuova matrice ordinata $M'$.
+    \item \textbf{Estrazione del testo:} Si estrae l'ultima colonna della matrice $M'$ (denotata convenzionalmente con $L$, da \textit{Last}). Questa colonna costituisce il testo permutato $bw(s)$.
+    \item \textbf{Salvataggio dell'indice:} Si memorizza la posizione della riga (l'indice $l$) all'interno di $M'$ che contiene esattamente la stringa di partenza $s$. Questo valore è strettamente necessario per la successiva fase di decodifica.
+\end{enumerate}
+
+\noindent Al termine dell'esecuzione, la codifica restituisce due elementi:
+
+\begin{description}
+    \item[$bw(s)$:] il testo permutato (corrispondente alla colonna $L$).
+    \item[$l$:] un valore intero che rappresenta l'indice di riga.
+\end{description}
+
+\subsubsection{Decodifica BWT}
+L'algoritmo di decodifica ha il compito di ricostruire il testo originale $s$ a partire esclusivamente dall'output della codifica, ovvero il testo permutato $L = bw(s)$ e l'indice $l$. La reversibilità della trasformata si basa sulla stretta relazione strutturale che lega l'ultima colonna ($L$) alla prima colonna ($F$) della matrice concettuale ordinata $M'$.
+
+\paragraph{Ricostruzione della prima colonna ($F$)}
+Poiché le righe della matrice $M'$ sono le rotazioni cicliche della stringa originale, ogni colonna contiene esattamente lo stesso insieme di caratteri (una permutazione di $s$). Inoltre, poiché la matrice $M'$ è costruita ordinando lessicograficamente le righe, la sua prima colonna $F$ (\textit{First}) sarà intrinsecamente ordinata in senso alfabetico.
+Di conseguenza, il decodificatore è in grado di ricostruire integralmente la colonna $F$ senza dati aggiuntivi, semplicemente effettuando un ordinamento alfabetico crescente dei caratteri ricevuti nella stringa $L$.
+
+\paragraph{Vettore di permutazione $\tau$ (o $T$)}
+Per ripristinare la sequenza originale dei caratteri, la decodifica si affida a una proprietà fondamentale delle matrici di rotazioni ordinate: la conservazione dell'ordine relativo (nota anche come \textit{LF-mapping}). Questa proprietà garantisce che la $k$-esima occorrenza di uno specifico carattere in $L$ corrisponda esattamente alla $k$-esima occorrenza di quello stesso carattere in $F$.
+
+Grazie a questa biunivocità, il decodificatore costruisce un vettore di permutazione $T$ (o $\tau$) di dimensione $n$. Il vettore è definito in modo tale che $T[i] = j$, dove $j$ è la posizione nella colonna $F$ del carattere che si trova in posizione $i$ nella colonna $L$.
+Sfruttando il vettore $T$ e iniziando dall'indice di riga $l$, la stringa originale $s$ viene ricostruita iterativamente navigando la sequenza:
+\[ s[n-1-i] = L[T^{(i)}[l]] \quad \text{per } i = 0, \dots, n-1 \]
+dove $T^{(i)}[l]$ indica l'applicazione iterata del vettore di permutazione per $i$ volte a partire dalla posizione $l$.
+\subsubsection{Proprietà della BWT}
+L'efficacia della Trasformata di Burrows-Wheeler risiede nella sua capacità di raggruppare caratteri identici o simili, creando \textit{run} (sequenze) dello stesso simbolo nell'output. 
+
+\paragraph{Omogeneità locale}
+Questa caratteristica è nota come \textbf{omogeneità locale}. Poiché la matrice delle rotazioni $M'$ è ordinata lessicograficamente, righe adiacenti tenderanno a condividere lo stesso prefisso (che corrisponde al contesto destro nel testo originale). Di conseguenza, i caratteri che precedono contesti simili, e che finiscono nell'ultima colonna $L$, hanno un'alta probabilità di essere identici. Questo abbassa drasticamente l'entropia locale del testo permutato.
+
+\paragraph{Parole bilanciate}
+La BWT non migliora la compressione in egual misura per qualsiasi testo. L'idea di fondo è che la trasformata produca una stringa con elevata similarità locale (e quindi altamente comprimibile a valle) se la stringa di input risulta molto \textit{bilanciata}.
+
+Una parola $v$ è definita \textbf{bilanciata} se, per ogni singola lettera $a$ dell'alfabeto e per ogni coppia di fattori $u$ e $u'$ di $v$ aventi la medesima lunghezza ($|u| = |u'|$), vale la relazione:
+\[\left| |u|_a - |u'|_a \right| \le 1\]
+In aggiunta, una parola è detta \textbf{circolarmente bilanciata} se tutte le sue possibili rotazioni cicliche risultano essere bilanciate.
+
+\subsubsection{Utilizzi della BWT}
+Essendo una permutazione e non un compressore di per sé, la BWT viene utilizzata come primo stadio in pipeline di compressione lossless avanzate. L'implementazione pratica più celebre è il compressore \textbf{bzip2}, la cui architettura standard prevede la seguente catena di elaborazione:
+\begin{enumerate}
+    \item \textbf{BWT}: Raggruppa i caratteri sfruttando il contesto (omogeneità locale).
+    \item \textbf{Move-to-Front (MTF)}: Converte l'omogeneità locale in una sequenza di interi, con una forte prevalenza di valori prossimi allo zero.
+    \item \textbf{Run-Length Encoding (RLE)}: Comprime le lunghe sequenze di zeri generate dal MTF.
+    \item \textbf{Codificatore Statistico}: Applica una codifica entropica finale (come Huffman o codifica aritmetica) per emettere i bit, sfruttando la bassissima entropia della sequenza risultante.
+\end{enumerate}
+
+\subsection{Algoritmi di Trasformazione (Post-BWT)}
+La Trasformata di Burrows-Wheeler non riduce la dimensione dei dati, ma si limita a riordinarli massimizzando l'omogeneità locale. Tuttavia, i classici codificatori entropici di ordine zero (come Huffman o la codifica aritmetica) sono insensibili all'ordine dei simboli e si basano esclusivamente sulle frequenze globali dell'intero blocco.
+
+Per colmare questa lacuna e sfruttare il lavoro della BWT, l'output permutato viene elaborato da algoritmi di trasformazione intermedi. Tecniche come il Move-to-Front (MTF), il Run-Length Encoding (RLE) e il Distance Coding hanno lo scopo di convertire la località spaziale dei caratteri in una distribuzione statistica globalmente sbilanciata. Si produce un flusso di interi ad entropia estremamente bassa, rendendolo ideale per la fase finale di compressione entropica.
+
+\subsubsection{Move-to-Front (MTF)}
+Pubblicata da Ryabko nel 1980 con il nome di \textbf{book stack} e successivamente \textit{riscoperta} da Bentley nel 1986, si tratta di una trasformata reversibile sui dati. Partendo da un flusso di caratteri/byte in ingresso, restituisce un array di interi. Quale è l'idea alla base di MTF?
+Ogni simbolo del flusso in ingresso è sostituito con l'indice corrispondente nella \textit{lista dei simboli recenti}. Ricevendo dati con molti simboli ripetuti, questi simboli avranno come indice $0$, e grazie al principio di località, quando saranno diversi, sarà molto probabile che siano poco \textit{distanti} nell'elenco dei \textit{simboli recenti}. Con queste premesse, si otterrà un array di interi in cui i valori più piccoli saranno molto frequenti, mentre numeri grandi si avranno solo quando un simbolo non compariva da molto tempo. Questa caratteristica consentirà di applicare con successo una codifica a lunghezza variabile sui numeri ottenuti come la codifica Huffman, o la codifica aritmetica.
+I benefici offerti e la rapidità di esecuzione mitigano l'aumento di complessità derivante dall'avere un'elaborazione ulteriore sui dati da comprimere. 
+
+\paragraph{Codifica MTF}
+I processi di codifica e decodifica non sfruttano conoscenze statistiche sull'input, devono solo coordinarsi sull'ordine iniziale dei simboli.
+Dati
+\begin{description}
+    \item[X] lista ordinata dei simboli in ordine lessicografico
+    \item[L] flusso di dati in ingresso
+    \item[R] vettore di interi in uscita
+\end{description}
+
+\begin{algorithm}[H]
+\caption{Codifica Move-To-Front}
+\begin{algorithmic}
+\ForAll{$s$ in input}
+    \State individua l'indice $p$ del simbolo $s$ in $X$
+    \State aggiungi $p$ a $R$
+    \State sposta $s$ in testa a $X$
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+
+
+\paragraph{Esempio di codifica}
+\textit{Input}: \texttt{\underline{c}araaaaaaabbbr}
+
+Alfabeto $X = \{\texttt{"a"}, \texttt{"b"}, \texttt{"c"}, \texttt{"r"}\}$
+%tabella
+\input{parte3/mtf1}
+
+$R = [2\ 1\ 3\ 1\ 0\ 0\ 0\ 0\ 3\ 0\ 0\ 2]$
+
+\paragraph{Decodifica MTF}
+
+\begin{algorithm}[H]
+\caption{Decodifica Move-To-Front}
+\begin{algorithmic}
+\For{$i = 0 \text{ to } n-1$}
+    \State leggi il valore $R[i]$
+    \State assegna a $L[i]$ il carattere in posizione $R[i]$ di $X$
+    \State sposta il carattere in testa a $X$
+\EndFor
+\State \Return $L$
+\end{algorithmic}
+\end{algorithm}
+
+\paragraph{Proprietà di MTF}
+Move-to-Front aggiorna \textbf{dinamicamente} la struttura dati su cui si appoggia per codificare e decodificare, questo perché la codifica di ogni simbolo successivo dipende \textit{anche} dallo stato corrente, dettato dalla sequenza dei simboli analizzati fino a quel momento. È un algoritmo \textbf{dinamico e adattivo}: lo stato della lista $X$ evolve nel tempo in base ai simboli processati, consentendo di sfruttare il principio di \textit{località temporale}) della sequenza in ingresso.
+
+È ideale da combinare a valle della trasformata di Burrows-Wheeler, sfruttando l'omogeneità locale da essa generata.
+
+\subsubsection{Run Length Encoding}
+Questa tecnica di compressione \textbf{lossless} è ottimizzata per sorgenti caratterizzate da lunghe sequenze di simboli identici, definiti \textbf{run}. Il processo di codifica sostituisce ogni run con una coppia (simbolo, lunghezza) che ne identifica univocamente la struttura.
+
+La lunghezza dei run non è arbitraria: se il parametro $k$ definisce il numero di bit dedicati alla codifica della lunghezza, ogni run può avere una lunghezza massima pari a $2^k - 1$. Sequenze di simboli più lunghe devono essere necessariamente suddivise in più blocchi di codifica.
+
+\paragraph{Efficienza della codifica RLE}
+Le parole di codice \textit{in media} necessiteranno di meno bit per la loro codifica rispetto ai run che rappresentano. 
+
+Indichiamo con
+\begin{description}
+    \item[$\overline{E}$]: la media dei bit presenti nei run
+    \item[$\overline{N}$]: il numero medio dei bit nelle codeword che codificano i run
+\end{description}
+La \textit{bit rate} $r_b$ ottenuta sarà:
+\[r_b = \left(\frac{\overline{N}}{\overline{E}}\right)\]
+Affinché il processo risulti effettivamente efficiente in termini di compressione, il rapporto tra la lunghezza della codeword e il numero di simboli rappresentati deve soddisfare la condizione $r_b < 1$.
+
+\subsubsection{Distance Coding}
+Il \textit{Distance Coding} è una tecnica di trasformazione complementare, talvolta impiegata per rappresentare i simboli emessi dalla BWT o in alternativa al Move-to-Front. L'idea consiste nel codificare ogni occorrenza di un simbolo non tramite il suo valore assoluto, ma indicando la \textbf{distanza} (il numero di simboli distinti) che intercorre rispetto alla sua precedente apparizione nel flusso. 
+
+In presenza di alta omogeneità locale, i simboli tendono a ripresentarsi con frequenze ravvicinate, rendendo i valori di \textit{distanza} molto piccoli e pertanto altamente comprimibili tramite codificatori entropici a lunghezza variabile.
+\subsection{Combinazione di Tecniche}
+La trasformata BWT non opera come un compressore autonomo, ma costituisce il primo stadio di una pipeline di compressione più complessa. L'architettura standard, resa celebre dal compressore \textbf{bzip2}, implementa la seguente catena di elaborazione sequenziale:
+
+\begin{enumerate}
+    \item \textbf{BWT}: Trasforma l'input in una sequenza con alta omogeneità locale.
+    \item \textbf{Move-to-Front (MTF)}: Converte i simboli in un flusso di interi dominato da valori vicini allo zero, sfruttando la \textit{località temporale}.
+    \item \textbf{Run-Length Encoding (RLE)}: Compatta ulteriormente le lunghe sequenze di zeri generate dal passaggio precedente.
+    \item \textbf{Codificatore Statistico}: Applica una codifica entropica finale (come Huffman o codifica aritmetica) per emettere il flusso di bit compresso.
+\end{enumerate}
+Questa combinazione di tecniche costituisce l'architettura distintiva del compressore \textbf{bzip2}, che sfrutta la sinergia tra le trasformazioni reversibili (BWT, MTF, RLE) per preparare i dati a una codifica statistica finale altamente efficiente.
+\subsubsection{Teoremi sui limiti prestazionali}
+%TODO: limiti prestazionali

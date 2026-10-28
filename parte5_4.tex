@@ -1,0 +1,194 @@
+\section{Limiti dei Codici a Blocchi e Codici Perfetti}
+Abbiamo già visto che la distanza minima $d_{min}$ di un codice, ne determina le capacità correttive.
+È emerso anche il compromesso fondamentale che governa la codifica di canale: per aumentare $d_{min}$ e garantire una maggiore robustezza al rumore, è necessario aumentare il numero di cifre di ridondanza, il che riduce inesorabilmente il tasso informativo ($R = k/n$) e l'efficienza della trasmissione.
+Nasce quindi spontanea una domanda cruciale: fissata la lunghezza del blocco $n$ e la distanza minima desiderata $d_{min}$, qual è il \textbf{numero massimo di parole di codice} (e quindi la dimensione $k$ massima) che possiamo "impacchettare" nello spazio vettoriale senza che le loro sfere di decodifica si sovrappongano?
+
+\subsection{Il Limite di Singleton} % Slide 5
+Il primo limite alla dimensione dei codici è dato dal Limite di Singleton: è la disuguaglianza più \textit{diretta} e generale che lega i parametri fondamentali di un codice a blocchi.
+
+Sia $C(n,k)$ un codice a blocchi con distanza minima $d_{min}$ su alfabeto di cardinalità $s$, allora:
+\[|C|\leq s^{n-d_{min}+1}\]
+\textbf{Dimostrazione}: se $|C|$ fosse maggiore del limite, allora \textbf{almeno} due parole di codice $x_1$ e $x_2$ coinciderebbero sulle prime $n-d_{min}+1 $ cifre. Questo comporterebbe che la distanza minima tra le due parole sarebbe
+\[d_H(x_1,x_2) \leq n - (n-d_{min}+1) = d_{min}-1 \implies \textbf{ impossibile!}\]
+Visualizziamo il ragionamento come analogia del \textit{\textbf{Principio dei cassetti}}:
+\begin{enumerate}
+    \item \textit{Eliminiamo} le ultime $d_{min} - 1$ cifre da tutte le parole.
+    \item rimangono \textit{tronconi} di parole lunghi $n-(d_{min}-1)=n-d_{min}+1$.
+    \item le combinazioni diverse (\textit{i cassetti}) per parole lunghe $n-d_{min}+1$ su un alfabeto di cardinalità $s$ sono $s^{n-d_{min}+1}$
+    \item ma il codice di partenza ha $s^n$ parole, e $s^k > s^{n-d_{min}+1}$
+    
+\item questo implica che avremmo due parole di codice in partenza diverse che finiscono nello stesso \textit{cassetto} (ovvero hanno i primi $n-d_{min}+1$ simboli identici). Essendo identiche in questa prima parte, l'unico punto in cui possono differire sono esattamente le $d_{min}-1$ cifre che avevamo \textit{eliminato}. Ma se differiscono al massimo in $d_{min}-1$ posizioni, la loro distanza reciproca sarà minore o uguale a $d_{min}-1$, violando così la definizione stessa di distanza minima del codice!
+    
+    \item per evitare questo assurdo, si deve imporre che il numero di parole sia minore delle combinazioni possibili
+    \item  deve valere $$ |C| \leq s^{n - d_{min} + 1} $$
+    
+\end{enumerate}
+
+
+Quindi, limitare la cardinalità del codice o la distanza minima delle sue parole sono due facce della stessa medaglia.
+
+
+Nel caso specifico dei codici lineari su un alfabeto di cardinalità $s$, il numero delle parole di codice (ovvero il numero totale da codificare) è dato da $|C| = s^k$. Sostituendo questo valore nella disuguaglianza generale del limite di Singleton, si ottiene:
+\[ s^k \leq s^{n-d_{min}+1} \]
+Applicando il logaritmo in base $s$ (con $s \ge 2$) a entrambi i membri, la disuguaglianza mantiene il proprio verso poiché la funzione logaritmo con base maggiore di 1 è strettamente crescente:
+\[ \log_s(s^k) \leq \log_s(s^{n-d_{min}+1}) \]
+Dalle proprietà dei logaritmi ($\log_b(b^x) = x$), gli esponenti si "abbassano":
+\[ k \leq n - d_{min} + 1 \iff d_{min} \leq n - k + 1\]
+Quindi per i codici lineari validi, la distanza minima è dettata dal valore di $k$ scelto.
+
+\subsection{I Limiti di Hamming (Sphere Packing Bound)} % Slide 6-15
+Se il Singleton bound è un limite \textit{esistenziale} per i codici lineari, ora analizziamo i limiti legati al \textit{volume geometrico} dello spazio di Hamming, calcolando quante parole di codice possiamo \textit{impacchettare} al suo interno senza che le loro sfere di decodifica si sovrappongano, inficiando così una corretta decodifica.
+
+Prima evidenziamo come sono in relazione il numero di codeword (su alfabeto binario) di un codice e l'\textit{informazione} generata da una sorgente che emette $R$ simboli binari al secondo:
+per trasmettere adeguatamente l'informazione generata, se un canale può trasmettere \textbf{un solo simbolo} al secondo, servirà un insieme di $2^{nR}$ parole di codice.
+
+Da ciò si intuisce come per un alto tasso di trasmissione è necessario un numero di parole di codice \textit{grande}.
+
+Ma quante parole di codice possono esserci in un codice affinché si possano correggere configurazioni con al più $t$ errori per parola trasmessa?
+In altre parole quanto grande può essere l'insieme di parole del codice, e quindi quanta informazione può passare in un canale, volendo però poter correggere un numero congruo di possibili errori?
+
+
+
+
+\subsubsection{Hamming Upper Bound (Numero di parole di codice)} % Slide 6-11
+Consideriamo ogni codeword come il centro della propria \textit{sfera di correzione}, all'interno dello spazio di Hamming. Considerando un codice \textbf{binario}, avremo $M=2^k$ sequenze binarie lunghe $n$, in grado di correggere tutte le configurazioni fino a $t$ errori. Per evitare sovrapposizioni tra sfere/sequenze deve valere la relazione:
+\[\textbf{Limite di Hamming:} \space 2^k= 2^{n\frac{k}{n}}=2^{nR} \leq \frac{2^n}{\sum_{i=0}^t\binom{n}{i}}\]
+In dettaglio si ha che:
+\begin{itemize}
+\item $2^n$ è la dimensione dello spazio per \textbf{tutte} le sequenze binarie lunghe $n$.
+\item $$\sum_{i=0}^t\binom{n}{i}$$ quantifica quante sequenze differiscono da $w_i$ fino a $t$ posizioni
+\end{itemize}
+
+\textbf{Dimostrazione:}
+\begin{itemize}
+    \item $$w_1,\dots, w_M$$ parole di codice \textbf{binarie}
+    \item Ad ogni parola è associata una sfera con \textit{centro} $w_i$, e \textit{raggio} $t$
+    \item ognuna delle $M$ \textit{sfere} (partizioni) è l'insieme di \textbf{tutte} le sequenze binarie $v$ tali che $d_H(w_i, v) \leq t$
+    \item ogni sequenza che ricade dentro una sfera $i$ dista al massimo $t$ dal suo centro (parola con cui viene decodificata)
+    \item ogni sfera \textit{contiene} $1+ \binom{n}{1}+\dots+\binom{n}{t}=\sum_{i=0}^t\binom{n}{i}$ sequenze
+    \item  il totale delle sequenze incluse nelle sfere è quindi $M\sum_{i=0}^t\binom{n}{i}$
+    \item il numero di sequenze contenute nelle sfere però \textbf{non può eccedere il numero totale di sequenze binarie} in uno spazio di dimensione $n$:
+    \[ M\sum_{i=0}^t \binom{n}{i} \leq 2^n
+    \implies
+    M=2^k\leq \frac{2^n}{\sum_{i=0}^t\binom{n}{i}}\]
+\end{itemize}
+Il valore di $M$ è un rapporto tra lo spazio e il numero di configurazioni lunghe fino a $t$.
+
+Il limite di Hamming è una \textbf{condizione necessaria ma NON sufficiente} per un codice che corregge fino a $t$ errori.
+\begin{esempio}{}
+\[t=1,n=4 \implies M\leq \frac{2^n}{(1+n)}= \frac{16}{5}\]
+Il numero intero più grande che soddisfa il limite di Hamming è $M=3$. Ma non esistono codici che possano correggere singoli errori con più di 2 parole di lunghezza 4, perché la distanza minima per correggere un errore è $d_{min}=3$
+\end{esempio}
+
+\begin{esempio}{}
+    Possiamo correggere singoli errori, con parole di lunghezza $5$ con un codice di $4$ parole binarie ($00000,\space 10011,\space 11100,\space 01111$).
+\end{esempio}
+\begin{esempio}{}
+    Se vogliamo correggere errori doppi mantenendo parole di lunghezza $5$, non possiamo usare più di due parole ($00000,\space 11111$).
+\end{esempio}
+
+
+\subsubsection{Hamming Lower Bound (Numero di cifre di controllo)} % Slide 12-15
+Con la precedente analisi si è data una limitazione alla dimensione del codice, con questa ulteriore valutazione si impone un limite inferiore al numero $q=n-k$ di cifre di controllo.
+
+\[2^q= 2^{n-k}\geq \sum_{i=0}^t\binom{n}{i}\]
+\textbf{Dimostrazione}:
+Se un codice a controllo di parità è capace di correggere \textbf{fino a $t$} errori, allora ogni combinazione di \textbf{$t$ o meno} errori deve risultare in un \textbf{singolo correttore} (sindrome distinta).
+\begin{itemize}
+    \item Il numero di possibili vettori di errore di lunghezza $n$ contenenti esattamente $i$ errori è dato dal coefficiente binomiale $\binom{n}{i}$.
+    \item I possibili correttori (sindromi) sono invece $2^{n-k}=2^{q}$.
+    \item Per garantire l'unicità di ogni correttore per ogni combinazione di errore deve valere la formulazione del limite di Hamming:
+    \[2^{n-k}\geq 1 + \binom{n}{1}+\dots+ \binom{n}{t}=
+    \sum_{i=0}^t\binom{n}{i}\]
+    \item il termine 1 nella sommatoria è presente nel caso in cui \textbf{non si verifichino} errori (ovvero il vettore di errore nullo, a cui è associata la sindrome nulla);
+\end{itemize}
+L'Hamming Lower Bound è una \textbf{condizione necessaria MA NON sufficiente} per costruire codici a blocchi che correggano fino a $t$ errori. Potrebbero esistere valori di $q_0$, inteso come il più piccolo intero positivo che soddisfi il Lower Bound, per valori di $n$ e $t$, ma potrebbero \textbf{non} esistere codici validi con $q_0$ cifre di controllo.
+\begin{esempio}{Lower Bound soddisfatto, codice impossibile}
+\[n=10 \quad t=2 \implies 2^q= 2^{n-k}\geq \sum_{i=0}^t\binom{n}{i}\implies q_0=6\]
+Non esistono codici lineari binari che possano correggere un doppio errore con meno di $7$ cifre di controllo, perché la distanza minima per correggere un doppio errore è 5!    
+\end{esempio}
+Servirà un ulteriore teorema per dare un limite superiore al numero di cifre di controllo.
+
+\paragraph{Hamming Upper e Lower Bound}
+Il limite \textit{inferiore} sul \textbf{numero di cifre di controllo} ($q$) e il limite \textit{superiore} sul \textbf{numero delle parole di codice} ($k$) sono, nei fatti, due facce della stessa medaglia.
+Partendo dalla formulazione del Lower Bound sulle cifre di controllo $q = n-k$:
+\[ 2^{n-k} \geq \sum_{i=0}^t\binom{n}{i} \]
+Sfruttando le proprietà delle potenze $2^{n-k} = \frac{2^n}{2^k}$):
+
+\[ \frac{2^n}{2^k} \geq \sum_{i=0}^t\binom{n}{i} \]
+A questo punto, moltiplicando entrambi i membri per $2^k$ e dividendo per la sommatoria, ricaviamo esattamente la formula dell'Upper Bound:
+\[ 2^k \leq \frac{2^n}{\sum_{i=0}^t\binom{n}{i}} \]
+Questo dimostra che limitare lo spazio per le parole di codice o garantire spazio sufficiente per le sindromi d'errore sono lo stesso identico vincolo matematico.
+
+
+\subsection{Il Limite VGS (Varshamov-Gilbert-Sacks)} % Slide 16-21
+Il limite di Hamming definisce una condizione \textit{necessaria} sul numero di cifre di controllo $q$, ma non ci garantisce che un codice con tali parametri sia effettivamente costruibile. 
+
+Adesso introduciamo una condizione \textbf{sufficiente, ma NON necessaria} per la costruibilità del codice.
+Un limite \textit{sufficiente} (ma non necessario) per la costruzione di un codice è fornito dal teorema di Varshamov-Gilbert-Sacks (VGS); afferma che:
+
+Un codice binario con parole lunghe $n$ che corregge $t$ errori \textbf{può essere costruito} se il numero delle cifre di controllo soddisfa la seguente relazione:
+\[2^q=2^{n-k} > \sum_{i=0}^{2t-1}\binom{n-1}{i}\]
+Se per un dato $n$ e un dato $t$, troviamo il più piccolo intero $q_0$ che soddisfa questa relazione, il limite VGS ci dà la certezza matematica che \textbf{esiste} almeno un codice lineare con $q_0$ cifre di controllo in grado di correggere $t$ errori. 
+
+\begin{esempio}{}
+    \[n=10,t=2 \implies 2^q > \sum_{i=0}^{2t-1}\binom{n-1}{i} \implies q_0=8\]
+    Tuttavia esistono codici che correggono errori doppi con un $q=7$ cifre di controllo.
+\end{esempio}
+
+\paragraph{Confronto tra i limiti di Hamming e VGS} % Slide 18 e 21
+
+Applicando il logaritmo in base 2 alle disuguaglianze viste precedentemente, possiamo isolare il numero di cifre di controllo $q$ ed evidenziare il ruolo complementare dei due limiti.
+
+\vspace{0.5cm}
+\noindent
+\begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \textbf{Limite di Hamming}\\
+    \textit{(Condizione Necessaria)}
+    
+    \[ q \ge \log_2 \left[ \sum_{i=0}^t\binom{n}{i} \right] \]
+    
+    Velocità di trasmissione:
+    \[ R \le 1 - \frac{1}{n}\log_2 \left[ \sum_{i=0}^t\binom{n}{i} \right] \]
+    
+    \vspace{0.4cm}
+    $\Downarrow$
+    \vspace{0.2cm}
+    
+    \fbox{\begin{minipage}{0.9\textwidth}
+        \small \centering
+        \textbf{Limite superiore sulla ridondanza minima}: tutti i codici che correggono $t$ errori devono rispettare questo limite.
+    \end{minipage}}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \textbf{Limite VGS}\\
+    \textit{(Condizione Sufficiente)}
+    
+    \[ q > \log_2 \left[ \sum_{i=0}^{2t-1}\binom{n-1}{i} \right] \]
+    
+    \vspace{1.75cm} % Spazio per allineare le frecce e i box
+    $\Downarrow$
+    \vspace{0.2cm}
+    
+    \fbox{\begin{minipage}{0.9\textwidth}
+        \small \centering
+        \textbf{Limite inferiore sufficiente sulla ridondanza minima}: esiste almeno un codice che corregge $t$ errori se si rispetta questo limite.
+    \end{minipage}}
+\end{minipage}
+\vspace{0.5cm}
+
+\subsection{Codici Perfetti}
+Esiste tuttavia una classe ristretta e molto speciale di codici in cui il limite di Hamming viene soddisfatto con l'\textbf{uguaglianza esatta}:
+\[ 2^k \sum_{i=0}^t \binom{n}{i} = 2^n \]
+I codici che soddisfano questa equazione sono definiti \textbf{Codici Perfetti}.
+
+Dal punto di vista geometrico, in un codice perfetto le sfere di decodifica di raggio $t$ realizzano una partizione esatta dell'intero spazio di Hamming: riempiono tutto il volume disponibile senza sovrapporsi e \textbf{senza lasciare alcuno "spazio vuoto"}. 
+
+Di conseguenza, \textit{qualsiasi} sequenza binaria $y$ di lunghezza $n$ che il ricevitore possa captare, ricadrà matematicamente dentro una (e una sola) sfera di decodifica. Questo implica che i vettori di errore più pesanti ($wt(e) > t$) non genereranno mai una richiesta di ritrasmissione, ma subiranno inesorabilmente una \textbf{decodifica errata certa}.
+
+\begin{esempio}
+I \textbf{Codici di Hamming} (che correggono un singolo errore, $t=1$) sono l'esempio per eccellenza di codici perfetti. Un'altra classe famosa e molto rara in teoria dell'informazione è rappresentata dai \textit{Codici di Golay} (con $n=23,k=12,t=3$). Oltre a questi, esistono solo codici perfetti "banali" (come i codici a ripetizione di lunghezza dispari).
+\end{esempio}

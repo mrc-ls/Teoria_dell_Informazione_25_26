@@ -1,0 +1,33 @@
+\begin{center}
+    % --- Minipage Sinistra: Elenco puntato ---
+    \begin{minipage}[c]{0.50\textwidth}
+        \begin{itemize}
+            \item $H(X|Y)=0$
+            \item $C_S=\log(M)$ nel caso in cui $P$ sia \textbf{uniforme}
+        \end{itemize}
+    \end{minipage}
+    \hfill
+    % --- Minipage Destra: Grafico ---
+    \begin{minipage}[c]{0.40\textwidth}
+        \centering
+        \begin{tikzpicture}[yscale=0.6, >=Stealth]
+            \node (x1L) at (-0.6, -1) {$x_1$}; \fill (0, -1) circle (2.2pt) coordinate (x1);
+            \node (x2L) at (-0.6, -2.5) {$x_2$}; \fill (0, -2.5) circle (2.2pt) coordinate (x2);
+            \node (x3L) at (-0.6, -4) {$x_3$}; \fill (0, -4) circle (2.2pt) coordinate (x3);
+
+            \fill (2, 0) circle (2.2pt) coordinate (y5); \node at (2.5, 0) {$y_5$};
+            \fill (2, -1) circle (2.2pt) coordinate (y1); \node at (2.5, -1) {$y_1$};
+            \fill (2, -2.5) circle (2.2pt) coordinate (y2); \node at (2.5, -2.5) {$y_2$};
+            \fill (2, -4) circle (2.2pt) coordinate (y3); \node at (2.5, -4) {$y_3$};
+            \fill (2, -5) circle (2.2pt) coordinate (y4); \node at (2.5, -5) {$y_4$};
+
+            \draw[thin] (x1) -- (y5);
+            \draw[thin] (x1) -- (y1);
+            \draw[thin] (x2) -- (y2);
+            \draw[thin] (x3) -- (y3);
+            \draw[thin] (x3) -- (y4);
+        \end{tikzpicture}
+        \par\vspace{0.3cm} 
+        \small \textit{Esempio con $M=5,K=3$}
+    \end{minipage}
+\end{center}

@@ -1,0 +1,70 @@
+\begin{center}
+\begin{minipage}[c]{0.45\textwidth}
+    \begin{itemize}
+        \item $x_i = u_i \quad \text{per } i=1,2,3,4$
+        \item $x_5 = u_1 + u_2 + u_3$
+        \item $x_6 = u_2 + u_3 + u_4$
+        \item $x_7 = u_1 + u_2 + u_4$
+    \end{itemize}
+\end{minipage}
+\hfill % Inserisce spazio elastico tra le due minipage
+\begin{minipage}[c]{0.45\textwidth}
+    \centering
+    \begin{tikzpicture}[
+    node distance=1.2cm and 0.6cm,
+    box/.style={rectangle, draw, minimum width=0.8cm, minimum height=0.7cm, thick},
+    xor/.style={circle, draw, thick, inner sep=0pt, minimum size=6mm},
+    arrow/.style={-Stealth, thin}
+]
+
+    % --- Registro di Input (u) ---
+    \node (u4) [box] {$u_4$};
+    \node (u3) [box, right=0pt of u4] {$u_3$};
+    \node (u2) [box, right=0pt of u3] {$u_2$};
+    \node (u1) [box, right=0pt of u2] {$u_1$};
+    
+    \node [above=0.2cm of u3.north east] {$k=4$};
+    \draw [arrow] ([xshift=-1cm]u4.west) -- (u4.west);
+
+    % --- Porte XOR (Sommatori) ---
+    \node (xor7) [xor, below=1.5cm of u4] {$+$};
+    \node (xor6) [xor, below=1.5cm of u3] {$+$};
+    \node (xor5) [xor, below=1.5cm of u2] {$+$};
+
+    % --- Registro di Output (x) ---
+    \node (x7) [box, below=1cm of xor7] {$x_7$};
+    \node (x6) [box, right=0pt of x7] {$x_6$};
+    \node (x5) [box, right=0pt of x6] {$x_5$};
+    \node (x4) [box, right=0pt of x5] {$x_4$};
+    \node (x3) [box, right=0pt of x4] {$x_3$};
+    \node (x2) [box, right=0pt of x3] {$x_2$};
+    \node (x1) [box, right=0pt of x2] {$x_1$};
+
+    % --- Connessioni Sistematiche (u_i -> x_i) ---
+    \draw [arrow] (u4.south) -- (x4.north);
+    \draw [arrow] (u3.south) -- (x3.north);
+    \draw [arrow] (u2.south) -- (x2.north);
+    \draw [arrow] (u1.south) -- (x1.north);
+
+    % --- Connessioni di Parità (Basate sulle equazioni fornite) ---
+    % x5 = u1 + u2 + u3
+    \draw [arrow] (u3.south) -- (xor5.north);
+    \draw [arrow] (u2.south) -- (xor5.north);
+    \draw [arrow] (u1.south) -- (xor5.north);
+    \draw [arrow] (xor5) -- (x5);
+
+    % x6 = u2 + u3 + u4
+    \draw [arrow] (u4.south) -- (xor6.north);
+    \draw [arrow] (u3.south) -- (xor6.north);
+    \draw [arrow] (u2.south) -- (xor6.north);
+    \draw [arrow] (xor6) -- (x6);
+
+    % x7 = u1 + u2 + u4
+    \draw [arrow] (u4.south) -- (xor7.north);
+    \draw [arrow] (u2.south) -- (xor7.north);
+    \draw [arrow] (u1.south) -- (xor7.north);
+    \draw [arrow] (xor7) -- (x7);
+
+\end{tikzpicture}
+\end{minipage}
+\end{center}

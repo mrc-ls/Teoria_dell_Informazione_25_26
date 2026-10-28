@@ -1,0 +1,55 @@
+\begin{center}
+\begin{tikzpicture}[
+    node distance = 1.2cm and 4cm,
+    point/.style = {circle, fill, inner sep=1.8pt},
+    blue_arr/.style = {blue, -{Stealth[scale=0.8]}, thin},
+    red_arr/.style = {red, -{Stealth}, shorten >=5pt, shorten <=5pt},
+    font=\large
+]
+
+    % --- 1. PROBABILITÀ E NODI DI INGRESSO ---
+    \node (p1) at (-4, 1) {$P(x_1) = P_1 = p$};
+    \node (p2) at (-4, -1) {$P(x_2) = P_2 = 1 - p$};
+
+    \node (xl1) at (-0.6, 1) {$x_1$};
+    \node[point] (x1) at (0, 1) {};
+    
+    \node (xl2) at (-0.6, -1) {$x_2$};
+    \node[point] (x2) at (0, -1) {};
+
+    % --- 2. NODI DI USCITA ---
+    \node[point] (y1) at (4, 1) {};
+    \node (yl1) at (4.6, 1) {$y_1$};
+    
+    \node[point] (y2) at (4, -1) {};
+    \node (yl2) at (4.6, -1) {$y_2$};
+
+    % --- 3. COLLEGAMENTI (Linee nere del canale) ---
+    \draw (x1.center) -- (y1.center);
+    \draw (x2.center) -- (y2.center);
+    \draw (x1.center) -- (y2.center);
+    \draw (x2.center) -- (y1.center);
+
+    % --- 4. FRECCE ROSSE (Input) ---
+    \draw[red_arr] (p1) -- (xl1);
+    \draw[red_arr] (p2) -- (xl2);
+
+    % --- 5. ANNOTAZIONI BLU (Probabilità di transizione) ---
+    % Sopra x1 -> y1
+    \draw[blue_arr] (1.5, 1.4) -- node[above, font=\small] {$1-\alpha$} (2.5, 1.4);
+    
+    % Sotto x2 -> y2
+    \draw[blue_arr] (1.5, -1.4) -- node[below, font=\small] {$1-\alpha$} (2.5, -1.4);
+    
+    % Diagonale x1 -> y2 (freccia alpha)
+    \begin{scope}[shift={(2.8,-0.35)}, rotate=-26]
+        \draw[blue_arr] (0,0) -- node[right, font=\small] {$\alpha$} (0.8,0);
+    \end{scope}
+    
+    % Diagonale x2 -> y1 (freccia alpha)
+    \begin{scope}[shift={(2.5,0.1)}, rotate=26]
+        \draw[blue_arr] (0,0) -- node[right, font=\small, pos=0.8] {$\alpha$} (0.8,0);
+    \end{scope}
+
+\end{tikzpicture}
+\end{center}

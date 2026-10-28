@@ -1,0 +1,58 @@
+<svg width="800" height="350" viewBox="0 0 800 350" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+    </marker>
+    <marker id="arrowhead-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#4169E1"/>
+    </marker>
+    <marker id="arrowhead-red" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#D32F2F"/>
+    </marker>
+    <style type="text/css">
+      .box-channel { fill: #fff; stroke: #333; stroke-width: 2; rx: 10; ry: 10; }
+      .text-main { font-family: Arial, Helvetica, sans-serif; font-size: 16px; text-anchor: middle; fill: #333; }
+      .text-blue { font-family: Arial, Helvetica, sans-serif; font-size: 16px; text-anchor: middle; fill: #4169E1; }
+      .text-red { font-family: Arial, Helvetica, sans-serif; font-size: 16px; text-anchor: middle; fill: #D32F2F; font-weight: bold; }
+      .connector { stroke: #333; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+      .connector-blue { stroke: #4169E1; stroke-width: 4; fill: none; marker-end: url(#arrowhead-blue); }
+      .connector-red { stroke: #D32F2F; stroke-width: 2; fill: none; marker-end: url(#arrowhead-red); }
+    </style>
+  </defs>
+
+  <text x="200" y="30" class="text-blue">
+    <tspan x="200" dy="0">L'ingresso è costituito da un insieme</tspan>
+    <tspan x="200" dy="25">finito X di simboli x<tspan baseline-shift="sub" font-size="12">i</tspan>.</tspan>
+  </text>
+  <text x="600" y="30" class="text-blue">
+    <tspan x="600" dy="0">L'uscita è costituita da un insieme</tspan>
+    <tspan x="600" dy="25">finito Y di simboli y<tspan baseline-shift="sub" font-size="12">j</tspan>.</tspan>
+  </text>
+
+  <line x1="200" y1="70" x2="150" y2="130" class="connector-blue"/>
+  <line x1="600" y1="70" x2="650" y2="130" class="connector-blue"/>
+
+  <text x="100" y="160" class="text-main" font-size="18" font-weight="bold">
+    X = {x<tspan baseline-shift="sub" font-size="14">1</tspan>, ..., x<tspan baseline-shift="sub" font-size="14">M</tspan>}
+  </text>
+  <text x="700" y="160" class="text-main" font-size="18" font-weight="bold">
+    Y = {y<tspan baseline-shift="sub" font-size="14">1</tspan>, ..., y<tspan baseline-shift="sub" font-size="14">K</tspan>}
+  </text>
+
+  <g transform="translate(300, 125)">
+    <rect x="0" y="0" width="200" height="70" class="box-channel"/>
+    <text x="100" y="40" class="text-main" font-size="18" font-weight="bold">CANALE</text>
+  </g>
+
+  <line x1="180" y1="160" x2="298" y2="160" class="connector"/>
+  <line x1="502" y1="160" x2="628" y2="160" class="connector"/>
+
+  <text x="400" y="250" class="text-red">
+    <tspan x="400" dy="0">Il rumore e altre possibili distorsioni del canale alterano i simboli trasmessi, producendo</tspan>
+    <tspan x="400" dy="25">un alfabeto a destinazione Y che può essere diverso da quello di</tspan>
+    <tspan x="400" dy="25">ingresso X (K può essere diverso da M).</tspan>
+  </text>
+
+  <line x1="400" y1="230" x2="400" y2="198" class="connector-red"/>
+
+</svg>

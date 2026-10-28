@@ -1,0 +1,28 @@
+\definecolor{headergreen}{HTML}{00B08B} % Colore smeraldo dell'intestazione
+
+\begin{center}
+\renewcommand{\arraystretch}{2}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{|c|c|c|c|c|}
+    \hline
+    \rowcolor{headergreen} 
+    \textbf{\textcolor{white}{Messaggio}} & 
+    \textbf{\textcolor{white}{Parola di codice}} & 
+    \textbf{\textcolor{white}{Singolo errore}} & 
+    \textbf{\textcolor{white}{Doppio errore}} & 
+    \textbf{\textcolor{white}{Triplo errore}} \\ \hline
+    
+    % --- Riga Messaggio 0 ---
+    \textbf{0} & \textcolor{red}{000} & 
+    (00\textcolor{blue}{1} 0\textcolor{blue}{1}0 \textcolor{blue}{1}00) & 
+    (0\textcolor{blue}{11} \textcolor{blue}{11}0 \textcolor{blue}{1}0\textcolor{blue}{1}) & 
+    \textcolor{blue}{111} \\ \hline
+    
+    % --- Riga Messaggio 1 ---
+    \textbf{1} & \textcolor{red}{111} & 
+    (\textcolor{blue}{0}11 1\textcolor{blue}{0}1 11\textcolor{blue}{0}) & 
+    (1\textcolor{blue}{00} \textcolor{blue}{0}1\textcolor{blue}{0} \textcolor{blue}{00}1) & 
+    \textcolor{blue}{000} \\ \hline
+\end{tabular}%
+}
+\end{center}

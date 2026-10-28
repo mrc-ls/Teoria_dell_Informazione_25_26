@@ -1,0 +1,36 @@
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    node distance=1.5cm and 2cm,
+    startstop/.style={rectangle, rounded corners, minimum width=2.5cm, minimum height=1cm, align=center, draw=black, fill=gray!10},
+    process/.style={rectangle, minimum width=3.5cm, minimum height=1cm, align=center, text width=4cm, draw=black, fill=blue!5},
+    decision/.style={diamond, aspect=2, minimum width=3cm, minimum height=1cm, align=center, draw=black, fill=green!5},
+    arrow/.style={thick,->,>=stealth}
+]
+
+% Nodi
+\node (start) [startstop] {Inizio};
+\node (init) [process, below=of start] {Inizializza Dizionario\\ $\mathit{Prefisso} \gets \text{NULL}$};
+\node (read) [process, below=of init] {Leggi carattere $C$};
+\node (eof) [decision, below=of read, yshift=0.5cm] {Fine input?};
+\node (decide) [decision, below=of eof, yshift=0.5cm] {$\mathit{Pref}+C$ in Dizionario?};
+\node (yes) [process, right=of decide, xshift=1cm] {$\mathit{Prefisso} \gets \mathit{Prefisso} + C$};
+\node (no) [process, below=of decide] {Output $code(\mathit{Prefisso})$\\ Inserisci $\mathit{Prefisso}+C$\\ $\mathit{Prefisso} \gets C$};
+\node (end) [startstop, right=of eof, xshift=2.5cm] {Output $code(\mathit{Prefisso})$\\ Fine};
+
+% Frecce
+\draw [arrow] (start) -- (init);
+\draw [arrow] (init) -- (read);
+\draw [arrow] (read) -- (eof);
+\draw [arrow] (eof) -- node[anchor=west] {No} (decide);
+\draw [arrow] (eof) -- node[anchor=south] {Sì} (end);
+\draw [arrow] (decide) -- node[anchor=south] {Sì} (yes);
+\draw [arrow] (decide) -- node[anchor=west] {No} (no);
+
+% Loop di ritorno
+\draw [arrow] (yes) |- (read);
+\draw [arrow] (no) -- ++(-3.5,0) |- (read);
+
+\end{tikzpicture}
+\caption{Diagramma di flusso logico della codifica LZW}
+\end{figure}

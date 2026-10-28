@@ -1,0 +1,36 @@
+\definecolor{headergreen}{HTML}{00B08B} % Colore smeraldo dell'intestazione
+
+\begin{center}
+\renewcommand{\arraystretch}{1.8}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{|c|c|c|c|c|}
+    \hline
+    \rowcolor{headergreen} 
+    \textbf{\textcolor{white}{Messaggio}} & 
+    \textbf{\textcolor{white}{Parola di codice}} & 
+    \textbf{\textcolor{white}{Singolo errore}} & 
+    \textbf{\textcolor{white}{Doppio errore}} & 
+    \textbf{\textcolor{white}{Triplo errore}} \\ \hline
+    
+    % --- Messaggio 00 ---
+    \textbf{00} & \textbf{000} & (001 010 100) & (011 110 101) & \textcolor{blue}{111} \\ \hline
+    
+    % --- Messaggio 01 ---
+    \textbf{01} & \textbf{01\textcolor{red}{1}} & (010 001 111) & (000 101 110) & \textcolor{blue}{100} \\ \hline
+    
+    % --- Messaggio 10 ---
+    \textbf{10} & \textbf{10\textcolor{red}{1}} & (100 111 001) & (110 011 000) & \textcolor{blue}{010} \\ \hline
+    
+    % --- Messaggio 11 ---
+    \textbf{11} & \textbf{11\textcolor{red}{0}} & (111 100 010) & (101 000 011) & \textcolor{blue}{001} \\ \hline
+\end{tabular}%
+}
+
+\vspace{0.5cm}
+\begin{minipage}{\linewidth}
+    \small
+    \textbf{Nota sulle capacità di rilevazione:} \\
+    \indent \textbf{Singolo e Triplo errore:} \textbf{Rilevati} perché il numero dispari di errori altera la parità. \\
+    \indent \textbf{Doppio errore:} \textcolor{red}{\textbf{Non rilevati}} perché due errori mantengono la parità inalterata (pari).
+\end{minipage}
+\end{center}

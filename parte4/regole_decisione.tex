@@ -1,0 +1,28 @@
+\begin{center}
+\begin{tikzpicture}[>=Stealth, node distance=0.6cm, baseline=(p1.base)]
+    % --- 1. COSTRUZIONE EQUAZIONE (testo nero) ---
+    % Scomponiamo l'equazione in pezzi per cerchiarli singolarmente
+    \node (p1) {$p(x_i)$};
+    \node (p2) [right=-2pt of p1] {$p(y|x_i)$};
+    \node (rest) [right=0pt of p2] {$\geq p(x_j)p(y|x_j)$};
+
+    % --- 2. CERCHIATURE ---
+    % Sorgente (Azzurro)
+    \node[draw=blue!50!black, fill=blue!10, ellipse, inner sep=1pt, 
+          minimum width=1.2cm, minimum height=0.7cm, opacity=0.4] at (p1) {};
+          
+    % Canale (Giallino)
+    \node[draw=orange!60!black, fill=yellow!20, ellipse, inner sep=1pt, 
+          minimum width=1.6cm, minimum height=0.7cm, opacity=0.4] at (p2) {};
+
+    % --- 3. DIDASCALIE E FRECCE ---
+    % Nota SORGENTE a SINISTRA
+    \node[left=1.2cm of p1, text=blue!80!black, font=\small, align=right] (txt_src) {dipende dalla\\sorgente};
+    \draw[->, blue!80!black, thin] (txt_src.east) -- ([xshift=-8pt]p1.west);
+
+    % Nota CANALE SOTTO
+    \node[below=0.8cm of p2, text=orange!80!black, font=\small, align=center] (txt_chan) {dipende dal\\canale};
+    \draw[->, orange!60!black, thin] (txt_chan.north) -- ([yshift=-8pt]p2.south);
+    
+\end{tikzpicture}
+\end{center}

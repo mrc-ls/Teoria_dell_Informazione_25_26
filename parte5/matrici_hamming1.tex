@@ -1,0 +1,48 @@
+\definecolor{sottoblu}{HTML}{E3F2FD}
+\definecolor{sottogiallo}{HTML}{FFF9C4}
+\definecolor{borderblu}{HTML}{1565C0}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{equation*}
+% --- MATRICE G ---
+G = 
+\begin{pNiceMatrix}[
+    margin,
+    code-before = {
+        \rectanglecolor{sottoblu}{1-1}{4-4}
+        \rectanglecolor{sottogiallo}{1-5}{4-7}
+    },
+    code-after = {
+        \begin{tikzpicture}
+            \draw[borderblu, thick] (1-1.north west) rectangle (4-4.south east);
+            \draw[borderblu, thick] (1-5.north west) rectangle (4-7.south east);
+            \node [below=10pt] at (4-2.5) {$I_4$};
+            \node [below=10pt] at (4-6) {$A$};
+        \end{tikzpicture}
+    }
+]
+    1 & 0 & 0 & 0 & 1 & 0 & 1 \\
+    0 & 1 & 0 & 0 & 1 & 1 & 1 \\
+    0 & 0 & 1 & 0 & 1 & 1 & 0 \\
+    0 & 0 & 0 & 1 & 0 & 1 & 1 
+\end{pNiceMatrix}
+\qquad \quad
+% --- MATRICE H ---
+H = 
+\begin{pNiceMatrix}[
+    margin,
+    code-after = {
+        \begin{tikzpicture}
+            \draw[dashed, blue!60!black] (1-4.north east) -- (3-4.south east);
+            \node [below=10pt] at (3-2.5) {$-A^T$};
+            \node [below=10pt] at (3-6) {$I_3$};
+        \end{tikzpicture}
+    }
+]
+    1 & 1 & 1 & 0 & 1 & 0 & 0 \\
+    0 & 1 & 1 & 1 & 0 & 1 & 0 \\
+    1 & 1 & 0 & 1 & 0 & 0 & 1
+\end{pNiceMatrix}
+\end{equation*}
+\end{center}

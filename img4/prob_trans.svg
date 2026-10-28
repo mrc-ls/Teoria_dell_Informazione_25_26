@@ -1,0 +1,66 @@
+<svg width="750" height="420" viewBox="250 10 600 420" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow-blue" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#1E88E5" />
+    </marker>
+    
+    <style type="text/css">
+      .node { fill: #333; }
+      .line-graph { stroke: #555; stroke-width: 1.5; }
+      /* Font Times per le variabili matematiche */
+      .text-math { font-family: 'Times New Roman', serif; font-style: italic; font-size: 20px; }
+      .text-sub { font-size: 14px; baseline-shift: sub; }
+      .text-red { fill: #D32F2F; font-weight: bold; }
+      /* Font blu per le probabilità */
+      .text-blue-math { fill: #1E88E5; font-size: 18px; font-family: 'Times New Roman', serif; font-style: italic; }
+      
+      /* Stile frecce: sottili e curve */
+      .arrow-prob { 
+        fill: none; 
+        stroke: #1E88E5; 
+        stroke-width: 1.2; 
+        marker-end: url(#arrow-blue); 
+      }
+    </style>
+  </defs>
+
+  <g transform="translate(50, 0)">
+      <circle cx="350" cy="150" r="4" class="node"/>
+      <text x="320" y="155" class="text-math text-red">x<tspan class="text-sub">1</tspan></text>
+    
+      <circle cx="350" cy="290" r="4" class="node"/>
+      <text x="320" y="295" class="text-math text-red">x<tspan class="text-sub">2</tspan></text>
+    
+      <circle cx="650" cy="100" r="4" class="node"/>
+      <text x="670" y="105" class="text-math text-red">y<tspan class="text-sub">1</tspan></text>
+    
+      <circle cx="650" cy="220" r="4" class="node"/>
+      <text x="670" y="225" class="text-math text-red">y<tspan class="text-sub">2</tspan></text>
+    
+      <circle cx="650" cy="340" r="4" class="node"/>
+      <text x="670" y="345" class="text-math text-red">y<tspan class="text-sub">3</tspan></text>
+    
+      <line x1="350" y1="150" x2="650" y2="100" class="line-graph"/> <line x1="350" y1="150" x2="650" y2="220" class="line-graph"/> <line x1="350" y1="150" x2="650" y2="340" class="line-graph"/> <line x1="350" y1="290" x2="650" y2="100" class="line-graph"/> <line x1="350" y1="290" x2="650" y2="220" class="line-graph"/> <line x1="350" y1="290" x2="650" y2="340" class="line-graph"/> </g>
+
+  <g transform="translate(50, 0)">
+  
+      <text x="500" y="50" class="text-blue-math">P(y<tspan class="text-sub">1</tspan>|x<tspan class="text-sub">1</tspan>)</text>
+      <path d="M540,60 L520,105" class="arrow-prob"/>
+    
+      <text x="750" y="120" class="text-blue-math">P(y<tspan class="text-sub">1</tspan>|x<tspan class="text-sub">2</tspan>)</text>
+      <path d="M740,120 C700,125 670,140 620,135" class="arrow-prob"/>
+    
+      <text x="750" y="190" class="text-blue-math">P(y<tspan class="text-sub">2</tspan>|x<tspan class="text-sub">1</tspan>)</text>
+      <path d="M740,190 C700,180 670,180 620,195" class="arrow-prob"/>
+      
+      <text x="750" y="260" class="text-blue-math">P(y<tspan class="text-sub">2</tspan>|x<tspan class="text-sub">2</tspan>)</text>
+      <path d="M740,255 C700,265 670,260 620,245" class="arrow-prob"/>
+
+      <text x="750" y="340" class="text-blue-math">P(y<tspan class="text-sub">3</tspan>|x<tspan class="text-sub">1</tspan>)</text>
+      <path d="M740,335 C680,320 660,300 600,280" class="arrow-prob"/>
+      
+      <text x="500" y="400" class="text-blue-math">P(y<tspan class="text-sub">3</tspan>|x<tspan class="text-sub">2</tspan>)</text>
+      <path d="M530,385 L560,345" class="arrow-prob"/>
+
+  </g>
+</svg>

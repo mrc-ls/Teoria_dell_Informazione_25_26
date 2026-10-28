@@ -1,0 +1,402 @@
+\part{Fondamenti della Teoria dell'Informazione}
+
+\chapter{Informazione ed Entropia}
+
+Sviluppando il concetto di informazione come quantità misurabile e indipendente dalla semantica, in questo capitolo vengono analizzati gli strumenti matematici necessari per quantificare l'incertezza. Il legame tra la probabilità di accadimento degli eventi e la loro portata informativa trova la sua sintesi nell'\textbf{entropia}, la grandezza che definisce il contenuto informativo medio di una sorgente di informazione.
+
+Tali fondamenta teoriche consentono di interpretare il processo comunicativo come un fenomeno universale, fornendo modelli applicabili non solo all'informatica, ma anche allo studio del linguaggio naturale, della crittografia e della biologia molecolare.
+
+\section{Informazione e contenuto informativo}
+
+\subsection{Cenni storici: L'intuizione di Hartley}
+Prima della formalizzazione matematica definitiva ad opera di Claude Shannon nel 1948, i primi passi verso una misurazione quantitativa dell'informazione furono compiuti dall'ingegnere R.V.L. Hartley nel 1928. 
+
+Il contributo pionieristico di Hartley consistette nel legare per la prima volta il concetto di informazione all'eliminazione delle alternative. Secondo la sua visione, si genera informazione quando si escludono determinati eventi da un insieme di possibilità (come avviene, ad esempio, risolvendo l'incertezza basilare tra un "sì" e un "no", o nel lancio di una moneta). Questa associazione fondamentale tra informazione e risoluzione dell'incertezza ha fornito la base concettuale su cui è stata successivamente edificata l'intera teoria probabilistica della comunicazione.
+
+\subsection{Cosa è l'\textit{Informazione}}
+La risposta più immediata che si può dare è che l'informazione è uno scambio di conoscenza tra due entità, che comporta per chi la riceve il superamento di uno stato di incertezza e permette di risolvere una alternativa. Quanta incertezza riesce a sciogliere misura la sua \textit{utilità} o per meglio dire il suo contenuto informativo.
+È quindi di fondamentale importanza dare una misura puntuale del contenuto informativo di un'informazione.
+
+\subsection{Come si \textit{misura} l'informazione?}
+
+Per quantificare l'informazione in modo rigoroso, è necessario slegarsi dal significato semantico del messaggio e osservare esclusivamente la sua probabilità di occorrenza. L'idea guida è che il contenuto informativo sia direttamente proporzionale al grado di \textit{sorpresa} che un evento arreca al destinatario:
+
+\begin{itemize}
+    \item Un evento molto probabile (prevedibile) porta con sé poca informazione, poiché conferma ciò che era già ampiamente atteso.
+    \item Un evento molto raro (imprevedibile) porta molta informazione, in quanto risolve uno stato di incertezza elevato.
+\end{itemize}
+
+Oltre a questa proporzionalità inversa con la probabilità, una misura coerente dell'informazione deve soddisfare la proprietà di \textbf{additività}: se riceviamo due informazioni indipendenti, il contenuto informativo totale deve essere pari alla somma delle singole parti. Matematicamente, l'unica funzione in grado di trasformare il prodotto delle probabilità ($p_1 \cdot p_2$) nella somma dei contenuti informativi ($I_1 + I_2$) è il logaritmo.
+
+La scelta della base $b$ del logaritmo determina l'unità di misura utilizzata:
+\begin{itemize}
+    \item \textbf{Base 2}: l'unità di misura è il \textbf{BIT} (Binary Digit).
+    \item \textbf{Base $e$}: l'unità di misura è il \textbf{NAT} (Natural Unit).
+    \item \textbf{Base 10}: l'unità di misura è l'\textbf{HARTLEY}.
+\end{itemize}
+
+\subsection{BIT}
+Se l'informazione riduce il grado di incertezza, è naturale domandarsi quale sia il minimo \textbf{quanto} di informazione possibile. Tale valore minimo si riscontra quando l'incertezza riguarda la scelta tra due soli esiti \textbf{equiprobabili} (ovvero con probabilità $p=1/2$). Da questa configurazione elementare deriva il \textbf{BIT}, termine coniato da Shannon come contrazione di \textit{\textbf{B}inary dig\textbf{IT}}.
+
+È fondamentale sottolineare che questa definizione è concettualmente distinta dalla \textit{cifra binaria}, \textbf{Binit}, utilizzata in informatica: mentre quest'ultima rappresenta un supporto fisico o logico a due stati, il BIT di Shannon definisce l'unità fondamentale per misurare il contenuto informativo. Una cifra binaria può contenere \textit{fino a} un bit di informazione, ma ne veicola effettivamente uno solo quando i due stati hanno la medesima probabilità di verificarsi.
+
+\section{Sistemi di Comunicazione}
+Nella sua Teoria Matematica della Comunicazione, Shannon modella il processo comunicativo in modo preciso ma al contempo generico.
+
+Preciso, perché i vari componenti e le fasi della comunicazione sono definiti in modo rigoroso, permettendo un'analisi quantitativa del fenomeno;
+
+generico, in quanto lo schema risulta applicabile in ambiti profondamente differenti: dalla comunicazione verbale alle telecomunicazioni, fino al DNA.
+
+\subsection{Modello Base}
+Secondo lo schema classico di Shannon, qualunque processo comunicativo può essere scomposto in cinque componenti funzionali fondamentali:
+
+\begin{description}
+    \item[Sorgente:] L'entità che genera il messaggio originale scegliendo tra i simboli di un alfabeto $\Sigma$. La sorgente è caratterizzata statisticamente dalle probabilità di emissione di ciascun simbolo.
+    
+    \item[Trasmettitore (Codificatore):] Il blocco che trasforma il messaggio in un segnale adatto alla trasmissione sul canale. In questa fase avvengono le operazioni di compressione e protezione del dato.
+    
+    \item[Canale:] Il mezzo fisico che trasporta il segnale. Nelle analisi reali, il canale è sempre caratterizzato dalla presenza di \textbf{rumore}, ovvero un disturbo aleatorio che può alterare il segnale durante il transito.
+    
+    \item[Ricevitore (Decodificatore):] L'entità che riceve il segnale dal canale e tenta di ricostruire il messaggio originale effettuando le operazioni inverse rispetto al trasmettitore.
+    
+    \item[Destinatario:] L'utilizzatore finale a cui è destinata l'informazione ricostruita.
+\end{description}
+
+\subsection{Finalità della Codifica}
+All'interno del trasmettitore, l'informazione subisce due processi di trasformazione distinti che rispondono a esigenze opposte:
+
+\begin{description}
+    \item[Codifica di Sorgente:] Ha l'obiettivo di massimizzare l'efficienza eliminando la ridondanza superflua. Questo processo permette di rappresentare il messaggio con il minor numero possibile di bit senza perdita di contenuto informativo (compressione).
+    
+    \item[Codifica di Canale:] Ha l'obiettivo di garantire l'affidabilità della trasmissione. A differenza della precedente, questa operazione aggiunge \textit{strategicamente} una quota di ridondanza (bit di controllo) per permettere al ricevitore di rilevare e correggere eventuali errori introdotti dal rumore del canale.
+\end{description}
+
+
+
+\subsection{Definizione Probabilistica di Sorgente}
+Per poter misurare e manipolare l'informazione, è necessario modellare la \textbf{sorgente} in termini puramente statistici e probabilistici, astraendo dal significato dei messaggi che essa genera. 
+
+Una sorgente discreta di informazione viene definita da:
+\begin{itemize}
+    \item Un \textbf{alfabeto sorgente} $\Sigma = \{\sigma_1, \sigma_2, \dots, \sigma_m\}$, ovvero un insieme finito di $m$ simboli distinguibili.
+    \item Una \textbf{distribuzione di probabilità} associata ai simboli. Ad ogni simbolo $\sigma_i \in \Sigma$ è associata una probabilità di emissione $p_i = P(X = \sigma_i)$, tale che:
+    \[ 0 \le p_i \le 1 \quad \forall i \]
+    \[ \sum_{i=1}^{m} p_i = 1 \]
+
+    \item Symbol rate $r$: misurata in $\frac{simboli}{secondo}$, rappresenta la velocità \textbf{media} di emissione della sorgente.
+\end{itemize}
+
+Quando le successive emissioni di simboli da parte della sorgente sono eventi statisticamente \textit{indipendenti} tra loro (cioè la probabilità di emettere un simbolo non dipende dai simboli emessi in precedenza), la sorgente prende il nome di \textbf{Sorgente Discreta Senza Memoria}.
+
+Al contrario, se i simboli emessi dipendono da un insieme finito di $t$ simboli emessi in istanti precedenti, parliamo di \textbf{sorgente con memoria}, o \textbf{sorgente di Markov}, di \textbf{ordine $t$}. Per sog
+
+
+\subsection{Richiamo sui Logaritmi}
+Essendo l'informazione legata a probabilità (che sono valori compresi tra 0 e 1) e dovendo rispettare proprietà di additività per eventi indipendenti, lo strumento matematico d'elezione per questa teoria è il \textbf{logaritmo}. 
+
+Quando si necessita di quantificare il contenuto informativo complessivo generato da più eventi, emerge una condizione fondamentale: poiché la probabilità congiunta di eventi indipendenti è data dal loro prodotto, mentre l'informazione totale deve corrispondere alla loro somma, l'unica funzione matematica in grado di soddisfare questo \textbf{vincolo di additività} è il logaritmo.
+
+\subsection{Auto-informazione di un Simbolo}
+Definita la probabilità di emissione $p_i$ di un singolo evento (o simbolo) $\sigma_i$, possiamo ora quantificare l'informazione che esso trasporta.
+
+Shannon definì \textbf{misura di informazione} (o auto-informazione) dell'evento $\sigma_i$ la quantità:
+\[ I(\sigma_i) = \log_b \left( \frac{1}{p_i} \right) = - \log_b p_i \]
+
+Le proprietà di $I(\sigma_i)$ sono:
+\begin{enumerate}
+    \item $I(\sigma_i) \geq 0 \quad 0 \leq p_i \leq 1$
+    \item informazione \textbf{nulla} per eventi \textbf{certi} $I(\sigma_i) \to 0 \impliedby p_i \to 1$ 
+    \item Monotonia: $p_i < p_j \implies I(\sigma_i) > I(\sigma_j)$ (eventi \textit{più rari} veicolano informazione maggiore)
+    \item Additività $I(\sigma_i,\sigma_j)= I(\sigma_i) + I(\sigma_j)$
+\end{enumerate}
+
+La base $b$ del logaritmo non è necessariamente specificata a priori, ma la sua scelta determina l'unità di misura assegnata al contenuto informativo:
+\begin{itemize}
+    \item Se la base è $2$, l'unità di misura è il \textbf{BIT} (la più usata in questo ambito).
+    \item Se la base è $e$, l'unità di misura è il \textbf{NAT} ($1 \text{ NAT} = 1.44 \text{ bits}$).
+    \item Se la base è $10$, l'unità di misura è l'\textbf{HARTLEY} ($1 \text{ HARTLEY} = 3.32 \text{ bits}$).
+\end{itemize}
+
+\begin{esempio}{Misura di informazione}
+Data una sorgente $S$ con il seguente alfabeto e probabilità associate:
+\[ S = \begin{pmatrix} a & b & c & r \\ 1/2 & 1/4 & 1/8 & 1/8 \end{pmatrix} \]
+I contenuti informativi dei singoli simboli (in bit, usando base 2) sono:
+\begin{align*}
+    I(a) &= \log_2\left(\frac{1}{1/2}\right) = \log_2(2) = 1 \text{ bit} \\
+    I(b) &= \log_2\left(\frac{1}{1/4}\right) = \log_2(4) = 2 \text{ bit} \\
+    I(c) &= \log_2\left(\frac{1}{1/8}\right) = \log_2(8) = 3 \text{ bit} \\
+    I(r) &= \log_2\left(\frac{1}{1/8}\right) = \log_2(8) = 3 \text{ bit}
+\end{align*}
+\end{esempio}
+\section{Teoria dell'Entropia}
+
+Estendendo il concetto di auto-informazione dal singolo evento all'intera sorgente, si definisce l'\textbf{Entropia} di una sorgente discreta senza memoria $S$ sull'alfabeto $\Sigma = \{\sigma_1, \sigma_2, \dots, \sigma_m\}$ come il valore atteso (o media pesata) del contenuto informativo dei suoi simboli:
+\[ H(S) = \sum_{i=1}^{m} p_i I(\sigma_i) = \sum_{i=1}^{m} p_i \log_2 \left( \frac{1}{p_i} \right) = - \sum_{i=1}^{m} p_i \log_2 p_i \]
+
+Assumendo la base $2$ per il logaritmo (convenzione standard se non diversamente specificato), l'entropia si misura in \textbf{bit/simbolo}. Essa rappresenta due concetti equivalenti:
+\begin{itemize}
+    \item L'\textbf{incertezza media} che un osservatore ha \textit{prima} di scoprire l'output della sorgente.
+    \item La \textbf{quantità media di informazione} per simbolo che la sorgente fornisce \textit{dopo} l'emissione.
+\end{itemize}
+
+Poiché la probabilità $p_i$ è compresa tra 0 e 1, il logaritmo $\log_2 p_i$ sarà sempre una quantità minore o uguale a zero. Di conseguenza, l'entropia, definita con il segno negativo davanti alla sommatoria, è una grandezza \textbf{sempre non negativa} ($H(S) \ge 0$).
+%ok paragraph?
+\paragraph*{Nota storica: L'origine del nome}
+Il termine "Entropia" fu suggerito a Shannon dal matematico John Von Neumann. Shannon inizialmente voleva chiamare la sua formula "informazione" o "incertezza". Von Neumann gli consigliò di usare \textit{entropia} per due motivi: in primo luogo, la funzione matematica era formalmente identica a quella utilizzata nella meccanica statistica; in secondo luogo, essendo l'entropia un concetto che "nessuno sa cosa sia con certezza", Shannon avrebbe avuto "sempre un vantaggio" in qualsiasi dibattito accademico.
+
+\subsection{Entropia di una Sorgente Binaria}
+Un caso di studio fondamentale è quello della sorgente binaria, in cui l'alfabeto è composto da due soli simboli con probabilità $p$ e $1-p$. Applicando la definizione, la funzione di entropia binaria $H(p)$ diventa:
+
+\[ H(p) = p \log_2 \left( \frac{1}{p} \right) + (1-p) \log_2 \left( \frac{1}{1-p} \right) \]
+
+Analizzando l'andamento di questa funzione, si deducono due comportamenti limite:
+\begin{itemize}
+    \item \textbf{Incertezza Nulla:} Se $p=0$ o $p=1$, l'esito è certo (la sorgente emette sempre lo stesso simbolo). In questo caso $H(p) = 0$.
+    \item \textbf{Incertezza Massima:} Il valore massimo dell'entropia si ottiene quando i due esiti sono equiprobabili, ovvero $p = 0.5$. In questa configurazione $H(0.5) = 1$ bit/simbolo.
+\end{itemize}
+
+\subsection{Proprietà fondamentali  e limiti dell'Entropia}
+Definita l'entropia, è necessario analizzarne il comportamento formale. La \textit{funzione entropia} $H(S)$ gode di proprietà matematiche che ne definiscono limiti assoluti e garantiscono la sua validità come \textit{misura dell'informazione}.
+
+\subsubsection{Il Lemma del Logaritmo}
+Serve un appiglio matematico per individuare la limitazione superiore dell'entropia. Il \textbf{Lemma del Logaritmo} applicato  all'equazione dell'entropia, permette di ricavare la seguente disuguaglianza:
+\[ -\sum_{i=1}^{m} p_i \log_b p_i \le -\sum_{i=1}^{m} p_i \log_b \left( \frac{1}{m} \right) \]
+
+Poiché il termine $\log_b(1/m)$ è una costante, può essere estratto dalla sommatoria, trasformandosi in $\log_b m \cdot \sum p_i$. Essendo la somma delle probabilità $\sum_{i=1}^{m} p_i = 1$, si ottiene l'assunto finale:
+\[ H(S) \le \log_b m \]
+
+\subsubsection{Upper bound per l'entropia}
+Data una sorgente $S$ con un alfabeto $\Sigma$ composto da $m$ simboli, ovvero $m = |\Sigma|$, l'entropia della sorgente è sempre limitata superiormente:
+\[H(S) \le \log_b m \]
+
+Il valore massimo dell'entropia viene raggiunto se e solo se tutti i simboli della sorgente sono \textbf{equiprobabili}. Formalmente:
+\[ H(S) = \log_b m \iff \forall i=1,\dots,m \text{ si ha } p_i = \frac{1}{m} \]
+
+\begin{esempio}{Upper bound per sorgente binaria}
+   Prendiamo ad esempio il lancio di una moneta
+   \[
+S = 
+\begin{pmatrix}
+    T & C &  \\
+    p & 1-p 
+\end{pmatrix}
+\hspace{2cm}
+H(S) = p \log\frac{1}{p} + (1-p)\log \frac{1}{1-p}
+\]
+La massima \textit{incertezza} sull'esito si ha quando $p=\frac{1}{2}=0.5$
+\end{esempio}
+
+
+
+
+\subsection{Estensione a Più Variabili: Esperimenti Congiunti e Condizionati}
+Per analizzare situazioni più articolate si deve considerare anche l'entropia per eventi congiunti ed eventi condizionati.
+Consideriamo due sorgenti (variabili casuali) $X$ ed $Y$ definite da
+\begin{flalign*}
+    X = 
+    \begin{pmatrix}
+        x_1 & x_2 & \dots & x_k \\
+        p(x_1) & p(x_2) & \dots & p(x_k)
+    \end{pmatrix}
+    \hspace{2cm}
+    Y =
+    \begin{pmatrix}
+        y_1 & x_2 & \dots & y_h \\
+        p(_1) & p(y_2) & \dots & p(y_h)
+    \end{pmatrix}
+\end{flalign*}
+Consideriamo gli eventi come \textit{indipendenti}.
+
+\subsubsection*{Probabilità Congiunta e Probabilità Condizionata}
+Con queste premesse, la probabilità che si verifichi la coppia di eventi $(x_i,y_j)$, detta \textbf{probabilità congiunta}, è il prodotto delle singole probabilità marginali:
+$$p(x_i,y_j) = p(x_i)\cdot p(y_j)$$
+
+La probabilità che si verifichi un evento $y_j$, a seguito di un evento $x_i$, con $p(x_i)>0$, è detta \textbf{probabilità condizionata} ed è definita come:
+$$p(y_j\mid x_i)= \frac{p(x_i,y_j)}{p(x_i)}$$
+
+\subsubsection{Entropia Congiunta e Massimo Valore}
+Considerando un esperimento congiunto che coinvolge due sorgenti (variabili aleatorie) $X$ e $Y$, rispettivamente con $k$ e $h$ esiti possibili, l'esperimento congiunto avrà $hk$ possibili risultati. L'\textbf{entropia congiunta} relativa a queste due sorgenti quantifica l'\textit{incertezza media globale} sulle coppie di esiti $(x_i, y_j)$, e si calcola utilizzando la probabilità congiunta:
+\[ H(X,Y) = - \sum_{i=1}^{k} \sum_{j=1}^{h} p(x_i, y_j) \log p(x_i, y_j) \]
+Possiamo pensare a $H(X,Y)$ come al \textbf{numero medio di bit necessario per rappresentare una coppia di valori provenienti da $X$ e $Y$}
+
+Come per l'entropia di una singola sorgente, anche per l'entropia congiunta è presente una limitazione superiore,
+Il \textbf{massimo valore} che l'entropia congiunta può assumere è pari alla somma delle entropie marginali delle singole variabili:
+\[ H(X,Y) \le H(X) + H(Y) \]
+L'uguaglianza stretta, ovvero $H(X,Y) = H(X) + H(Y)$, si verifica se e solo se gli esperimenti $X$ e $Y$ sono statisticamente indipendenti.
+
+\textbf{Dimostrazione del Massimo Valore:}
+Consideriamo le definizioni di $H(X)$, $H(Y)$ e la rispettiva entropia congiunta $H(X,Y)$
+$$H(X)= - \sum_{i=1}^k p(x_i)\log p(x_i)= -\sum_{i=1}^k\left( \sum_{j=1}^hp(x_i,y_j)\right) \log p(x_i)$$
+Per espandere $p(x_i)$, sfruttiamo la definizione di probabilità marginale: la probabilità totale che si verifichi l'evento $x_i$ è pari alla somma delle probabilità di tutte le possibili combinazioni congiunte in cui $x_i$ si presenta insieme a uno qualsiasi degli eventi $y_j$. Lo stesso principio si applica per ricavare $p(y_j)$.
+$$H(Y)= - \sum_{j=1}^h p(y_i)\log p(y_j)= -\sum_{j=1}^h\left( \sum_{j=1}^hp(x_i,y_j)\right) \log p(y_j)$$
+Lo stesso vale per $H(Y)$, \textit{espandendo} le $p(y_j)$
+
+
+Sfruttando la definizione delle probabilità marginali, ovvero $p(x_i) = \sum_{j} p(x_i, y_j)$ e $p(y_j) = \sum_{i} p(x_i, y_j)$, possiamo raccogliere tutti i termini all'interno di un'unica doppia sommatoria:
+\begin{align*}
+    H(X,Y) &= -\sum_{i=1}^{k} \sum_{j=1}^{h} p(x_i, y_j) \log p(x_i, y_j) \\
+    H(X)&=\quad - \sum_{i=1}^{k} p(y_j) \log p(x_i) = - \sum_{i=1}^{k}\left(\sum_{j=1}^{h} p(x_i, y_j)\right) \log p(x_i) \\
+    H(Y)&=\quad - \sum_{j=1}^{h} p(y_j) \log p(x_i) = - \sum_{j=1}^{h}\left(\sum_{i=1}^{k} p(x_i, y_j)\right) \log p(y_j)  \\
+    H(X)+H(Y)&= -\sum_{i=1}^{k}\left(\sum_{j=1}^{h} p(x_i, y_j)\right) \left[\log p(x_i) + \log p(y_j)\right] =
+\end{align*}
+
+Poniamo $q(x_i,y_j)=p(x_i)p(y_j)$, la somma delle entropie si riscrive come:
+$$H(X)+H(Y)= -\sum_{i=1}^k\left( \sum_{j=1}^h p(x_i,y_j)\right) \log q(x_i,y_j)$$
+
+Considerando il Lemma del Logaritmo e la formula dell'entropia congiunta, si ottiene:
+\[
+  H(X,Y) = -\sum_{i=1}^{k} \sum_{j=1}^{h} p(x_i, y_j) \log p(x_i, y_j) \leq - \sum_{i=1}^{k} \sum_{j=1}^{h} p(x_i, y_j) \log q(x_i, y_j)
+\]
+
+Nella formulazione originaria del Lemma, è presente una sola sommatoria e qui due, ma con una re-indicizzazione può essere portata ad una sola.
+
+Poiché $\sum_{i=1}^k \sum_{j=1}^h q(x_i,y_j) = \sum_{i=1}^k p(x_i) \sum_{j=1}^h p(y_j) = 1 \cdot 1 = 1$, la distribuzione $q$ è valida per l'applicazione del Lemma.
+
+Si è dimostrato che $H(X,Y) \leq H(X)+ H(Y)$, con l'uguaglianza valida se e soltanto se $X$ ed $Y$ sono indipendenti.
+\begin{esempio}{Entropia Congiunta}
+Consideriamo due esperimenti $X$ ed $Y$ con la seguente distribuzione di probabilità congiunta $p(x_i,y_i)$:
+
+
+\begin{center}
+
+\renewcommand{\arraystretch}{2.2} 
+\setlength{\tabcolsep}{12pt}      
+
+\begin{NiceTabular}{c|c|c|c|c}[hvlines]
+\CodeBefore
+  \arraycolor{gray!15} 
+\Body
+  \diagbox{Y}{X} & 1 & 2 & 3 & 4 \\
+  1 & $\frac{1}{8}$  & $\frac{1}{16}$ & $\frac{1}{32}$ & $\frac{1}{32}$ \\
+  2 & $\frac{1}{16}$ & $\frac{1}{8}$  & $\frac{1}{32}$ & $\frac{1}{32}$ \\
+  3 & $\frac{1}{16}$ & $\frac{1}{16}$ & $\frac{1}{16}$ & $\frac{1}{16}$ \\
+  4 & $\frac{1}{4}$  & 0              & 0              & 0              \\
+\end{NiceTabular}
+\end{center}
+La relativa entropia congiunta sarà:
+\begin{align*}
+H(X,Y) &= \sum_{i=1}^4\sum_{j=1}^4 p(x_i,y_j) \log_2\left(\frac{1}{p(x_i,y_j)}\right) \\
+       &= \frac{1}{4}\log_2(4) + \frac{1}{4}\log_2(8) + \frac{3}{8}\log_2(16) + \frac{1}{8}\log_2(32) \\
+       &= \frac{27}{8} = 3.375 \text{ bit}
+\end{align*}
+\end{esempio}
+
+
+\subsubsection{Entropia Condizionata}
+Conoscendo le distribuzioni di probabilità (e i rispettivi valori di entropia) di due sorgenti aleatorie $X$ ed $Y$, come si calcola l'entropia \textbf{condizionata}? Il valore di $H(X|Y)$ quantifica l'incertezza \textbf{media} residua sugli esiti della sorgente $X$, conoscendo la distribuzione di probabilità di $Y$.
+
+Per arrivare alla formulazione finale ci serve considerare prima la formula per calcolare l'entropia condizionata di $X$ calcolata sul verificarsi del particolare evento $y_j$ di $Y$:
+$$H(X|y_j)= \sum_{i=1}^k p(x_i|y_j)\log \frac{1}{p(x_i|y_j)}$$
+La media di questa incertezza, relativamente agli esiti di $Y$ è l'\textbf{Entropia condizionata di $X$ dato $Y$}:
+$$H(X|Y)=\sum_{j=1}^h p(y_j)H(X|y_j)$$
+$$H(X|Y)=\sum_{i=1}^k\sum_{j=1}^h p(y_j)p(x_i|y_j)\log\frac{1}{p(x_i|y_j)}$$
+
+
+
+\paragraph{Proprietà dell'Entropia Condizionata}
+Valgono tre proprietà:
+\begin{enumerate}
+    \item $H(X,Y)= H(Y) + H(X|Y)$
+    \item $H(X,Y)= H(X) + H(Y|X)$
+    \item $H(X|Y) \leq H(X), \quad H(X|Y)=H(X) \iff X,Y\text{ sono indipendenti}$
+\end{enumerate}
+
+%TODO: dimostrazione prima/seconda proprietà
+%TODO: esempio di entropia condizionata
+
+\subsection{Fondazione Assiomatica dell'Entropia}
+Finora abbiamo trattato l'entropia da un punto di vista \textit{operativo} e probabilistico. Shannon però ha definito questa specifica espressione matematica per quantificare \textit{incertezza} e \textit{informazione} con un approccio assiomatico, stabilendo i requisiti che una funzione deve possedere per poter essere considerata una misura coerente dell'informazione \textbf{media} prodotta da una sorgente.
+
+\subsubsection{I Tre Assiomi dell'Entropia di Shannon}
+Per una sorgente discreta definita come $S = 
+\begin{psmallmatrix}
+ \sigma_1 & \sigma_2 & \dots & \sigma_n \\ p_1 & p_2 & \dots & p_n     
+\end{psmallmatrix}$, Shannon ha introdotto, in modo assiomatico, il \textit{concetto di entropia}, alla ricerca di una funzione $H(S) = H_n(p_1, p_2, \dots, p_n)$ in grado di misurare l'informazione media prodotta da una sorgente. Affinché tale funzione sia valida, deve soddisfare tre assiomi fondamentali:
+\begin{enumerate}
+    \item \textbf{Continuità:} $H_n(p_1, p_2, \dots, p_n)$ deve essere una funzione continua delle probabilità $p_i$.
+    
+    \item \textbf{Monotonia:} Dati due esperimenti con risultati equiprobabili e rispettivamente $n$ ed $n+1$ esiti, l'esperimento con più esiti presenta un'incertezza maggiore:
+    $$H_n\left(\frac{1}{n}, \dots, \frac{1}{n}\right) < H_{n+1}\left(\frac{1}{n+1}, \dots, \frac{1}{n+1}\right)$$
+    
+    \item \textbf{Legge del Raggruppamento:} Se un esperimento viene scomposto in scelte o fasi successive, l'incertezza totale deve essere uguale alla somma dell'incertezza della \textbf{prima scelta} e delle incertezze delle \textbf{scelte successive}, ciascuna pesata per la propria probabilità di accadimento.
+    
+\end{enumerate}
+
+\subsubsection{Il Terzo Assioma: La Legge del Raggruppamento}
+
+Il terzo assioma è il vincolo strutturale più forte, in quanto definisce il comportamento dell'entropia a fronte di scomposizioni \textit{arbitrarie}. Garantisce che l'informazione totale non dipende da \textit{come} decidiamo di raggruppare o osservare gli esiti, ma esclusivamente dalla distribuzione di probabilità.
+
+%TODO: dimostrazione del terzo assioma
+
+Questo assioma garantisce la consistenza della misura: l'informazione totale non dipende da \textit{come} decidiamo di raggruppare o osservare gli esiti della sorgente, ma solo dalla struttura intrinseca delle probabilità.
+
+\subsubsection{Lemmi Preliminari}
+Per arrivare a dimostrare formalmente l'unicità della \textit{funzione entropia}, è necessario introdurre alcuni risultati matematici intermedi.
+
+\begin{enumerate}
+    \item \textbf{Lemma 1 (Lemma della funzione logaritmica):} una funzione $f$, positiva e monotòna crescente, per la quale per ogni $n$ intero e per ogni $t > 1$ vale $f(t^n)=nf(t)$, è della forma
+    \[f(t)= c\log(t)\]
+    %TODO: dimostrazione lemma 1
+    \item \textbf{Lemma 2 (Lemma dell'additività per prove indipendenti):} si deduce dal terzo assioma che l'incertezza relativa alle $n$ ripetizioni, tra loro \textit{indipendenti}, di un esperimento, è pari a $n$ volte l'incertezza/entropia del singolo esperimento:
+    \[H(Y^n)=nH(Y)\]
+    %TODO: dimostrazione lemma 2
+    \item \textbf{Lemma 3 (Lemma dell'incertezza per uscite equiprobabili):} dagli assiomi II e III, l'incertezza associata a un esperimento/sorgente con $k$ esiti/simboli \textbf{equiprobabili}, vale $C \log(k)$.
+
+    \textbf{Dimostrazione:} un esperimento configurato in questo modo avrà l'incertezza in funzione solamente del numero di esiti $k$. Quindi $Y^n$ ha $k^n$ possibili esiti equiprobabili; applicando il lemma precedente si ottiene:
+    \[h(k^n)=H(Y^n)=nH(Y)=nh(k)\]
+    Dal secondo assioma, $h(k)$ è una funzione \textbf{crescente in $k$}; applicando il primo Lemma si ottiene la tesi iniziale.
+\end{enumerate}
+
+
+\subsubsection*{Teorema di Unicità della funzione Entropia} 
+Consideriamo una sorgente $X$ con $n$ possibili simboli ${x_1,x_2,\dots,x_n}$, con relative probabilità ${p_1,p_2,\dots,p_n}$.
+\begin{theorem}
+L'unica funzione $H$ che soddisfa contemporaneamente gli assiomi I, II e III è:
+$$H(p_1, p_2, \dots, p_n) = -C \sum_{i=1}^{n} p_i \log_b p_i$$ 
+La costante $C$ dipende unicamente dalla unità di misura e dalla base del logaritmo, ma generalmente si assume uguale $C=1$.
+\end{theorem}
+
+\begin{proof}
+La dimostrazione segue due macro-passaggi logici principali: prima si verifica che la formula proposta rispetti i tre assiomi, e successivamente si dimostra che qualsiasi funzione che soddisfi tali assiomi deve necessariamente coincidere con la formula stessa.
+
+\medskip
+\textbf{Fase 1: La formula logaritmica soddisfa i tre assiomi.} 
+
+Sostituendo la funzione $H(p_1, \dots, p_n) = -C \sum p_i \log_b p_i$ nei tre assiomi originari, se ne verifica immediatamente la validità:
+\begin{itemize}
+    \item \textbf{Assioma I (Continuità):} L'assioma è soddisfatto poiché la funzione logaritmica è continua rispetto alle probabilità $p_i$. 
+    \item \textbf{Assioma II (Monotonia):} Per un esperimento con uscite equiprobabili, la formula si riduce a $H = C \log n$, ed è sempre vero che $C \log n < C \log(n+1)$.
+    \item \textbf{Assioma III (Raggruppamento):} Grazie alle proprietà dei logaritmi, i prodotti tra probabilità condizionate si trasformano in somme, portando a verificare l'identità (\textit{si omettono i passaggi algebrici per brevità}).
+\end{itemize}
+
+\medskip
+\noindent\textbf{Fase 2: Unicità della funzione per probabilità razionali} 
+Dimostriamo ora che se una funzione $H$ soddisfa gli assiomi, deve avere la forma del Teorema. Consideriamo un esperimento $Y$ avente $h$ risultati con probabilità razionali, che poniamo a comune denominatore $m$: 
+\[ p(y_j) = \frac{m_j}{m} \quad \text{per } j = 1, 2, \dots, h \]
+Immaginiamo un esperimento $X$ con $m$ uscite equiprobabili. Per il Lemma 3, la sua incertezza vale $H(X) = C \log m$. 
+L'esperimento $X$ può essere scomposto in due fasi: il nostro esperimento $Y$, seguito da uno tra $h$ esperimenti $Z^{(j)}$ indipendenti, ognuno con $m_j$ esiti equiprobabili e incertezza $H(Z^{(j)}) = C \log m_j$. 
+
+Per l'Assioma III (Raggruppamento) vale l'uguaglianza: 
+\[ H(X) = H(Y) + \sum_{j=1}^{h} p(y_j) H(Z^{(j)}) \]
+Sostituendo le incertezze dei casi equiprobabili fornite dal Lemma 3: 
+\[ C \log m = H(Y) + \sum_{j=1}^{h} p(y_j) \left( C \log m_j \right) \] 
+Possiamo ora isolare l'incertezza $H(Y)$ della nostra sorgente: 
+\[ H(Y) = C \log m - C \sum_{j=1}^{h} p(y_j) \log m_j \] 
+Sapendo che la somma delle probabilità $\sum p(y_j) = 1$, si moltiplica $C \log m$ per $1$ e si raccoglie la sommatoria:
+\[ H(Y) = C \sum_{j=1}^{h} p(y_j) \log m - C \sum_{j=1}^{h} p(y_j) \log m_j \]
+\[ H(Y) = -C \sum_{j=1}^{h} p(y_j) (\log m_j - \log m) = -C \sum_{j=1}^{h} \frac{m_j}{m} \log \frac{m_j}{m} \] 
+
+\medskip
+\noindent\textbf{Fase 3: Estensione alle probabilità reali} 
+
+Essendo stata provata l'uguaglianza per tutti i valori razionali, per il requisito di Continuità imposto dall'Assioma I, la medesima espressione estende la sua validità in modo univoco anche ai numeri reali. 
+\end{proof}
+
+\subsection{Entropia Relativa}
+L'entropia di una singola variabile casuale misura l'incertezza intrinseca e la quantità media di informazione necessaria per rappresentarla.
+L'\textbf{Entropia Relativa} misura la \textit{discrepanza} tra due diverse distribuzioni di probabilità $p$ e $q$ definite sul medesimo alfabeto, ed è definita come:
+\[ D(p \parallel q) = \sum_{x} p(x) \log \frac{p(x)}{q(x)} \]
+
+Dal punto di vista della teoria dell'informazione, $D(p \parallel q)$ quantifica l'\textbf{inefficienza}, ovvero quanti bit aggiuntivi per simbolo si generano assumendo erroneamente che la distribuzione della sorgente sia $q$, quando in realtà la distribuzione vera è $p$. \textit{Operativamente}, rappresenta il sovraccarico di lunghezza del codice se si progettasse un codice ottimale basato su $q$ anziché su $p$.
+
+Non è comunque una \textit{vera distanza} tra distribuzioni perché non è simmetrica e non rispetta la disuguaglianza triangolare.

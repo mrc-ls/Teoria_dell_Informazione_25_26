@@ -1,0 +1,41 @@
+\begin{table}[htbp]
+    \centering
+    % --- MINIPAGE PER LA TABELLA ---
+    \begin{minipage}[t]{0.48\textwidth}
+        \vspace{0pt} % Forza l'allineamento in alto
+        \small % Riduce leggermente la dimensione se la tabella è troppo larga
+        \begin{tabular}{c c c l}
+            \hline
+            \textbf{phrase} & \textbf{next} & \textbf{output} & \textbf{dictionary} \\
+            \hline
+            t & h & $\langle 116 \rangle$ & 256: \colorbox{pink}{th} \\
+            h & i & $\langle 104 \rangle$ & 257: \colorbox{pink}{hi} \\
+            i & n & $\langle 105 \rangle$ & 258: \colorbox{pink}{in} \\
+            n & k & $\langle 110 \rangle$ & 259: \colorbox{pink}{nk} \\
+            k & i & $\langle 107 \rangle$ & 260: \colorbox{pink}{ki} \\
+            in & g & $\langle 258 \rangle$ & 261: \colorbox{pink}{ing} \\
+            g & \_ & $\langle 103 \rangle$ & 262: \colorbox{pink}{g\_} \\
+            \_ & t & $\langle 32 \rangle$ & 263: \colorbox{pink}{\_t} \\
+            th & i & $\langle 256 \rangle$ & 264: \colorbox{pink}{thi} \\
+            ing & s & $\langle 261 \rangle$ & 265: \colorbox{pink}{ings} \\
+            s & \_ & $\langle 115 \rangle$ & 266: \colorbox{pink}{s\_} \\
+            \_t & h & $\langle 263 \rangle$ & 267: \colorbox{pink}{\_th} \\
+            h & r & $\langle 104 \rangle$ & 268: \colorbox{pink}{hr} \\
+            r & o & $\langle 114 \rangle$ & 269: \colorbox{pink}{ro} \\
+            o & u & $\langle 111 \rangle$ & 270: \colorbox{pink}{ou} \\
+            u & g & $\langle 117 \rangle$ & 271: \colorbox{pink}{ug} \\
+            g & h & $\langle 103 \rangle$ & 272: \colorbox{pink}{gh} \\
+            h & & $\langle 104 \rangle$ & 273: \colorbox{pink}{h} \\
+            \hline
+        \end{tabular}
+    \end{minipage}
+    \hfill % Crea spazio tra le due minipages
+    % --- MINIPAGE PER IL TESTO ---
+    \begin{minipage}[t]{0.45\textwidth}
+        \vspace{0pt} % Forza l'allineamento in alto
+        \textbf{Compressione LZW} 
+        \medskip
+        
+        Output della compressione passo-passo della stringa \textit{thinking things through}. Il carattere spazio è indicato convenzionalmente con il simbolo \texttt{\_}.
+    \end{minipage}
+\end{table}

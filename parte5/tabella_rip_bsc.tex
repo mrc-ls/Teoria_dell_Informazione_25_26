@@ -1,0 +1,32 @@
+\definecolor{lightsuccess}{HTML}{E3F2FD} % Azzurro pastello
+\definecolor{lighterror}{HTML}{FFF3E0}   % Arancio pastello
+\definecolor{darkblue}{HTML}{1565C0}     % Colore per Pc
+\definecolor{darkorange}{HTML}{E65100}   % Colore per Pe
+
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|c|c|c|c|}
+    \hline
+    \rowcolor{gray!20} \textbf{e} & \textbf{wt(e)} & \textbf{P(e)} & \textbf{P(e) se $\epsilon = 0.1$} \\ \hline
+    
+    % Gruppo Successo (Azzurro)
+    \rowcolor{lightsuccess} 000 & 0 & $(1-\epsilon)^3$ & 0.729 \\ \hline
+    \rowcolor{lightsuccess} 001 & 1 & $\epsilon(1-\epsilon)^2$ & 0.081 \\ \hline
+    \rowcolor{lightsuccess} 010 & 1 & $\epsilon(1-\epsilon)^2$ & 0.081 \\ \hline
+    \rowcolor{lightsuccess} 100 & 1 & $\epsilon(1-\epsilon)^2$ & 0.081 \\ \hline
+    
+    % Gruppo Errore (Arancio)
+    \rowcolor{lighterror} 011 & 2 & $(1-\epsilon)\epsilon^2$ & 0.009 \\ \hline
+    \rowcolor{lighterror} 101 & 2 & $(1-\epsilon)\epsilon^2$ & 0.009 \\ \hline
+    \rowcolor{lighterror} 110 & 2 & $(1-\epsilon)\epsilon^2$ & 0.009 \\ \hline
+    \rowcolor{lighterror} 111 & 3 & $\epsilon^3$ & 0.001 \\ \hline
+\end{tabular}
+
+\vspace{0.5cm}
+\begin{minipage}{\linewidth}
+    \centering
+    \small
+    \textcolor{darkblue}{\textbf{$P_C = 0.972$}} -- \textcolor{blue}{probabilità di \textbf{CORRETTA} decodifica} \\[0.3em]
+    \textcolor{darkorange}{\textbf{$P_e = 0.028$}} -- \textcolor{red}{probabilità di \textbf{ERRORE} in decodifica}
+\end{minipage}
+\end{center}

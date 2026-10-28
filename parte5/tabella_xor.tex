@@ -1,0 +1,21 @@
+\definecolor{tableblue}{HTML}{E6F0FF} % Azzurro tenue per lo sfondo
+
+\begin{center}
+    \renewcommand{\arraystretch}{1.5} % Spaziatura più ariosa
+    
+    % Tabella della Somma (XOR)
+    \begin{tabular}{|>{\columncolor{tableblue}\bfseries}c | >{\columncolor{tableblue}}c >{\columncolor{tableblue}}c |}
+        \hline
+        \rowcolor{tableblue} + & 0 & 1 \\ \hline
+        0 & 0 & 1 \\
+        1 & 1 & 0 \\ \hline
+    \end{tabular}
+    \quad % Spazio tra le due tabelle
+    % Tabella del Prodotto (AND)
+    \begin{tabular}{|>{\columncolor{tableblue}\bfseries}c | >{\columncolor{tableblue}}c >{\columncolor{tableblue}}c |}
+        \hline
+        \rowcolor{tableblue} * & 0 & 1 \\ \hline
+        0 & 0 & 0 \\
+        1 & 0 & 1 \\ \hline
+    \end{tabular}
+\end{center}

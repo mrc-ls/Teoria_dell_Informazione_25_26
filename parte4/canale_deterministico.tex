@@ -1,0 +1,43 @@
+\begin{center}
+    % --- Minipage Sinistra: Equazione ---
+    \begin{minipage}[c]{0.50\textwidth}
+        \[
+        p(y_j \mid x_i) = 
+        \begin{cases} 
+            1 & \text{se } i \in A_j \\ 
+            0 & \text{se } i \notin A_j 
+        \end{cases}
+        \]
+    \end{minipage}
+    \hfill
+    % --- Minipage Destra: Grafico con Didascalia ---
+    \begin{minipage}[c]{0.45\textwidth}
+        \centering
+        \begin{tikzpicture}[yscale=0.75, xscale=1.2]
+            % Colonna X (Ingressi da 1 a 5)
+            \foreach \i in {1,2,3,4,5} {
+                \node (xl\i) at (-0.5, -\i) {$x_\i$};
+                \fill (0, -\i) circle (2.2pt) node (x\i) {};
+            }
+
+            % Colonna Y (Uscite da 1 a 3)
+            \foreach \j in {1,2,3} {
+                \fill (2, -\j) circle (2.2pt) node (y\j) {};
+                \node at (2.5, -\j) {$y_\j$};
+            }
+
+            % Collegamenti
+            \draw (x1) -- (y1);
+            \draw (x2) -- (y2);
+            \draw (x3) -- (y3);
+            \draw (x4) -- (y3);
+            \draw (x5) -- (y3);
+
+            \node[draw=red, thick, inner sep=2pt, fit=(xl3) (x5), label=left:{\color{red}$A_3$}] {};
+            
+        \end{tikzpicture}
+        
+        \par\vspace{0.4cm}
+        \small \textit{Esempio: $K=5,M=3;\space A_3 = \{x_3,x_4,x_5\}$}
+    \end{minipage}
+\end{center}

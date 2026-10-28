@@ -1,0 +1,236 @@
+\chapter{Codici Convoluzionali}
+Così come i codici a blocchi, i codici convoluzionali nascono per fronteggiare le condizioni avverse dei canali trasmissivi, introducendo un'opportuna ridondanza in grado di proteggere l'informazione dagli errori.
+
+Tuttavia, mentre i codici a blocchi frammentano il flusso dei dati in segmenti rigidi e indipendenti (ogni parola di $k$ bit genera una codeword di $n$ bit senza alcun legame con i blocchi adiacenti), i codici convoluzionali operano in modo profondamente diverso.
+
+Sebbene siano anch'essi codici \textit{lineari} (strutturati ad albero), il loro codificatore è dotato di \textbf{\textit{memoria}}. È proprio grazie a questa memoria che l'operazione di \textbf{convoluzione} può "sparpagliare" il flusso di dati: la stringa in uscita in un dato istante non dipende solo dai bit attualmente in ingresso, ma è influenzata anche dallo storico dei bit precedenti. Questo meccanismo produce un flusso continuo in cui informazione e bit di controllo risultano indissolubilmente mescolati.
+ 
+\section{Principi e Struttura dei Codici Convoluzionali}
+
+%inserire testo introduttivo qui?
+
+\subsection{L'Operazione di Convoluzione e la Memoria}
+Il termine \textit{convoluzionale} deriva dall'omonima operazione matematica ed è il meccanismo centrale tramite il quale questi codici producono l'uscita. Prendendo spunto dall'etimologia della parola, \textbf{avvolgere insieme} è difatti ciò che fanno questi sistemi: aggiungono ridondanza e la intrecciano intimamente con i dati da codificare. Così come in matematica la convoluzione "fonde" due funzioni facendone scorrere una sull'altra, qui il flusso continuo dei dati scorre e si "fonde" con la struttura logica del codificatore.
+
+Da un punto di vista implementativo, se consideriamo $u$ come il flusso di dati in ingresso e $X$ come il flusso codificato in uscita, il processo avviene in modo continuo attraverso questi passaggi:
+
+%TODO: grafico
+
+\begin{itemize}
+    \item \textbf{Ingresso:} Dal flusso $u$ vengono letti $k$ bit per volta.
+    \item \textbf{Scorrimento (Memoria):} Questi bit entrano in un \textbf{registro a scorrimento} (\textit{shift register}). All'interno di questo registro sono ancora trattenuti i bit elaborati negli istanti precedenti, i quali implementano fisicamente la \textit{memoria} del codificatore.
+    \item \textbf{Combinazione:} Una \textbf{funzione combinatoria} (tipicamente una rete di porte logiche XOR) collegata ai vari stadi del registro va a mescolare i nuovi $k$ bit appena entrati con quelli vecchi. Questa operazione produce infine gli $n$ bit in uscita, che andranno a formare il flusso codificato $X$ da trasmettere sul canale.
+\end{itemize}
+
+\subsection{Parametri e notazioni}
+Elenchiamo parametri e notazioni per definire compiutamente un codificatore \textbf{binario convoluzionale $(n,k)$}
+\begin{itemize}
+
+\item \textbf{Data-frame ($k$):} Il gruppo di $k$ bit di informazione che entra nel codificatore in un singolo istante di tempo.
+
+\item \textbf{Code-frame ($n$):} Il gruppo di $n$ bit prodotto in uscita dalla rete logica in ogni istante. Per introdurre ridondanza, si ha sempre $n > k$.
+
+\item \textbf{Frequenza di codifica ($R_c = \frac{k}{n}$):} Detta anche \textit{Code Rate}, indica l'efficienza del codice ed è definita dal rapporto tra i bit di informazione e i bit totali del code-frame
+
+\item \textbf{Lunghezza di vincolo ($N$):} Indica quanti data-frame influenzano la generazione del code-frame. Rappresenta l'ampiezza della "finestra temporale" in cui un bit in ingresso continua a produrre effetti sull'uscita.
+\item \textbf{Memoria del codificatore $v=(N-1)k$:} Rappresenta il numero totale di bit \textit{passati}  memorizzati nei registri a scorrimento. Poiché il vincolo totale è $N$, gli stadi puramente di memoria sono $N-1$.
+\end{itemize}
+
+\subsection{Codificatore Convoluzionale}
+Un codificatore convoluzionale può quindi essere progettato come una \textbf{macchina sequenziale a stati}, con registri a scorrimento con $Nk$ posizioni, raggruppati in $N$ stadi, ciascuno di $k$ elementi. A loro volta i registri sono collegati a un circuito combinatorio collegato al registro di uscita; insieme al vincolo, il modo in cui è progettato il circuito determina il comportamento del codificatore.
+
+Per determinare il funzionamento del codificatore, faremo uso dei \textit{generatori}.
+%TODO: grafico
+
+\subsection{Sequenze Generatrici}
+Mentre nei codici lineari a blocchi, la codifica è determinata da matrici generatrici o da polinomi generatori, nei codici convoluzionali la codifica è specificata dalle \textbf{sequenze generatrici} (\textit{generatori}).
+
+Per determinare il comportamento di un codice convoluzionale $(n,k,N)$ ci si affida a $nk$ \textit{vettori di bit}, di lunghezza $N$, che identificano matematicamente (e \textit{fisicamente} identificando quali commutatori attivare) il codificatore. Definiscono in modo univoco il legame tra il flusso di dati in ingresso e i bit prodotti in uscita.
+
+Sia $[m_1,m_2,m_3,\dots]$ il flusso di messaggi in ingresso al codificatore.
+
+I generatori relativi all'uscita i-esima del codificatore sono indicati con:
+\[ g_{ij}=[g_{ij}^1,g_{ij}^2,\dots,g_{ij}^N] \quad i=1,\dots,n \quad j=1,\dots,k\]
+
+Sia $u_j^{(t)}$ il j-esimo ingresso al tempo $t$, con $j = 1,\dots , k$
+
+Sia $x_i^{(t)}$ la i-esima uscita al tempo $t$, con $i = 1,\dots , n$
+\[x_i^{(t)}= \sum_{j=1}^k\sum_{l=1}^N g_{ij}^lu_j^{(t-l)}\quad i=1,\dots,n\]
+
+
+Per un codificatore con vincolo di dimensione $N$, i generatori sono definiti dalle $n$ definizioni:
+\[g_i= [g_i^1,g_i^2,\dots,g_i^N]\quad i=1,\dots,n\]
+
+Il valore del coefficiente $g_i^l$ è pari a $1$ quando lo stadio $l$-esimo del registro in ingresso è \textbf{\textit{connesso}} al sommatore, la cui uscita è a sua volta connessa allo stadio $i$-esimo del registro in uscita. La sequenza in uscita all'$i$-esimo sommatore (assumendo $k=1$ singolo bit in ingresso), è quindi data dalla convoluzione:
+\[x_i^{(t)}= \sum_{l=1}^N g_i^{l}u^{(t-l)}\quad i=1,\dots, n\]
+
+\subsection{Rappresentazioni Grafiche}
+Si possono usare diverse rappresentazioni grafiche per rappresentare un codificatore convoluzionale:
+\begin{itemize}
+    \item rappresentazione \textit{ad albero}
+    \item rappresentazione \textit{a traliccio}
+    \item diagramma degli stati 
+\end{itemize}
+\subsubsection{Diagramma a Stati}
+Il diagramma degli stati è un \textbf{grafo} composto da $2^v = 2^{k(N-1)}$ nodi, ognuno dei quali è uno dei possibili stati in cui può trovarsi il codificatore.
+
+\noindent Con il grafo si può modellare completamente il comportamento di un codice convoluzionale.
+
+\noindent Ogni stato è identificato dagli $i$ bit nei registri a scorrimento, e dai $k$ bit in ingresso, che di concerto determinano gli $n$ bit in uscita.
+
+\noindent I nodi sono connessi tra loro tramite archi, ognuno dei quali identifica un data-frame in ingresso. Per data-frame di dimensione $k$, si avranno $2^k$ rami uscenti per ogni nodo
+
+\noindent La transizione da uno stato ad un altro è associata alla emissione di un code-frame di $n$ bit.
+
+\subsubsection{Diagramma a Traliccio (Trellis)}
+
+Il diagramma \textbf{a traliccio} può essere considerato come un'estensione \textit{temporale} di un diagramma a stati; aggiunge infatti un indice temporale $i$. È uno strumento utile per analizzare la decodifica.
+
+\noindent Per ogni indice temporale, il numero degli stati è determinato dalla memoria $v$ del codificatore; gli stati saranno quindi $2^v = 2^{k(N-1)}$.
+
+\noindent Nel passaggio da un indice temporale al successivo, gli stati sono connessi tramite gli archi delle possibili transizioni di stato, ognuna delle quali è determinata da una possibile sequenza in ingresso.
+
+\begin{esempio}{Codice Convoluzionale $(2,1,3)$} 
+Consideriamo un codificatore caratterizzato da $n=2$, $k=1$, $N=3$. 
+I due generatori associati alle uscite sono $g_1 = [110]$ e $g_2 = [011]$. 
+Le equazioni per i due bit di uscita all'istante $i$ risultano:
+\begin{align*}
+    x_1 &= u_i + u_{i-1} \\
+    x_2 &= u_{i-1} + u_{i-2}
+\end{align*}
+Lo stato del sistema è determinato dagli ultimi due bit in ingresso memorizzati nei registri ($u_{i-1}, u_{i-2}$). Al variare dell'ingresso $u_i$, la macchina transita tra i 4 stati possibili ($00, 10, 01, 11$), emettendo i relativi bit di uscita $x_1 x_2$ e tracciando un percorso specifico sul diagramma a stati e sul traliccio.
+\end{esempio}
+\subsection{Capacità Correttiva: Distanze del Codice}
+
+Le capacità di rivelazione e correzione degli errori di un codice convoluzionale sono vincolate alla stessa metrica fondamentale utilizzata per i codici a blocchi: la \textbf{distanza di Hamming}.
+
+Tuttavia, emerge una differenza sostanziale nel modo in cui questa metrica viene valutata. Non elaborando \textit{singole codeword} isolate, ma operando su \textit{flussi continui}, è necessario considerare la distanza tra le \textbf{intere sequenze} codificate $X$, generate a partire dai diversi flussi di informazione in ingresso.
+
+Poiché i codici convoluzionali mantengono la proprietà di \textbf{linearità,} calcolare la distanza minima tra due sequenze valide qualsiasi equivale semplicemente a valutare il \textbf{peso di Hamming} dell'intera sequenza (ovvero la sua distanza rispetto alla sequenza nulla composta da soli zeri).
+Non cambia quindi il paradigma che guida la decodifica, il criterio di \textbf{Massima Verosimiglianza} (\textit{Maximum Likelihood}).
+
+Si introducono due metriche specifiche per i codici convoluzionali, la distanza colonna e la distanza libera.
+
+\subsubsection{Distanza Colonna}
+Consideriamo due sequenze codificate fino all'istante $i$ in cui divergono alla prima diramazione del traliccio.
+
+La distanza colonna $d_c(i)$ è la misura della minima distanza di Hamming tra \textbf{tutte le coppie} di sequenze di questo tipo.
+
+Per calcolare $d_c(i)$ si considerano le distanze rispetto alla \textbf{sequenza di tutti zeri}. In questo modo, sfruttando la linearità del codice, la distanza colonna coincide con il \textbf{peso minimo} delle sequenze di codice che divergono alla prima ramificazione dalla \textit{sequenza zero}.
+
+La $d_c(i)$ è una funzione \textbf{non decrescente} della profondità $i$, ovvero:
+$$ d_c(i) \le d_c(i+1)$$
+
+L'apparente limitazione di valutare la distanza rispetto alla sola \textbf{sequenza nulla} (tutti zeri) è giustificata dalla \textbf{linearità} del codice. Poiché la distanza di Hamming tra due sequenze codificate $A$ e $B$ è identica al peso di Hamming della loro somma modulo-2 ($A \oplus B$), e dato che in un codice lineare tale somma è anch'essa una sequenza valida, la sequenza di tutti zeri funge da \textbf{riferimento universale}. 
+
+Trovare il percorso che diverge e accumula il minor peso rispetto allo zero equivale a trovare la distanza minima tra \textbf{qualsiasi} coppia di sequenze del codice, senza dover confrontare ogni possibile combinazione di messaggi.
+
+\subsubsection{Distanza Libera}
+Estendendo l'analisi della distanza colonna verso una profondità infinita, definiamo la \textbf{distanza libera} come il valore limite:
+\[ d_l = \lim_{i \to \infty} d_c(i) \]
+
+Rappresenta la minima distanza di Hamming tra due sequenze codificate di lunghezza arbitraria (\textit{infinitamente lunghe}). Grazie alla linearità, $d_l$ coincide con il peso minimo di un percorso che:
+\begin{enumerate}
+    \item Diverge dal percorso nullo (stato tutto zero) al primo istante.
+    \item Attraversa il traliccio \textit{accumulando peso}.
+    \item Si ricongiunge \textit{alla fine} allo stato nullo iniziale.
+\end{enumerate}
+
+
+Il calcolo della distanza libera può quindi essere effettuato senza dover considerare il peso $w$ di tutte le possibili sequenze $w(X)$:
+
+Si identifica sul traliccio il percorso a \textbf{peso minimo} che si \textit{separa} dal percorso \textit{nullo}, per poi ricongiungersi, \textit{stabilmente} con quest'ultimo.
+
+Come già detto, $d_l$ sarà il \textbf{minimo peso} di questo insieme di sequenze.
+
+Operativamente si suppone di terminare una sequenza con una serie di bit $0$ in modo da riportare il registro a scorrimento al suo stato iniziale, composto di tutti $0$. In questo modo si eliminano alcuni rami dalle $L$ transizioni finali nel traliccio del codice.
+
+In fase di progettazione, fissati il rapporto di codifica $R_c = k/n$ e la lunghezza del vincolo $N$, il codice \textbf{ottimo} è quello che garantisce la \textbf{massima distanza libera} possibile, minimizzando così la probabilità di errore residua dopo la decodifica.
+
+%TODO: esempio
+
+\subsection{Funzione Generatrice}
+Mentre la distanza libera indica il \textit{caso peggiore}, si introduce la \textbf{funzione generatrice} per fornire l'intera distribuzione dei pesi del codice. Essa può essere vista come la funzione \textit{di trasferimento} del sistema, valutata rispetto alle transizioni tra gli stati del codificatore.
+
+La funzione generatrice fornisce indicazioni fondamentali sia sulla distanza libera, sia sulle probabilità di errore che si possono incontrare in fase di decodifica.
+
+\section{Decodifica dei Codici Convoluzionali} 
+Sono tre i metodi di decodifica principali per i codici convoluzionali:
+\begin{itemize}
+    \item \textbf{Algoritmo di Viterbi:} implementa una decodifica ottima a massima verosimiglianza, richiede hardware \textit{complesso};
+
+    \item \textbf{Decodifica Sequenziale:} realizza un compromesso tra complessità implementativa e prestazioni della decodifica;
+
+    \item \textbf{Decodifica a Retroazione:} decodifica che non richiede hardware \textit{complesso}, ma offre prestazioni inferiori;
+\end{itemize}
+
+\subsection{Metriche per la Decodifica a Massima Verosimiglianza su Traliccio}
+Similmente ai codici lineari a blocchi, anche per i codici convoluzionali il criterio di \textbf{massima verosimiglianza} viene espletato selezionando di volta in volta la sequenza di codice a \textbf{distanza minima}.
+
+Essendo la \textit{possibile sequenza codificata} un cammino sul traliccio del codice, il decodificatore individua il cammino a distanza minima dalla sequenza ricevuta.
+
+Si possono utilizzare due metriche:
+\begin{itemize}
+    \item \textbf{Distanza di Hamming:} nel caso di decodifica \textit{hard};
+    \item \textbf{Distanza Euclidea:} nel caso di decodifica \textit{soft};
+\end{itemize}
+
+\subsection{L'Algoritmo di Viterbi}
+In \textit{linea teorica}, un decodificatore a massima verosimiglianza dovrebbe analizzare l'intera sequenza ricevuta $Y$, trovando il percorso \textit{ammissibile} a minore distanza di Hamming da $Y$, ma in casi reali non è una strategia percorribile, il costo sarebbe proibitivo perché il numero di percorsi possibili cresce esponenzialmente con la lunghezza della sequenza.
+
+L'algoritmo proposto da Andrew Viterbi nel 1967, rende possibile la ricerca del cammino ottimale senza ricorrere a una ricerca esaustiva.
+
+Questo risultato si ottiene attraverso due pilastri fondamentali:
+\begin{itemize}
+    \item L'introduzione della \textbf{metrica di ramo} (\textit{branch metric}), che permette di valutare la distanza locale ad ogni transizione;
+    \item La selezione sistematica dei \textbf{percorsi sopravvissuti}, che consiste nel \textit{potare} precocemente i cammini che non possono più ambire ad essere ottimali, evitando così di esplorare rami inutili.
+\end{itemize}
+
+
+
+\subsubsection{Metrica di Ramo e Metrica di Percorso}
+
+Consideriamo il caso in cui in ingresso al registro a scorrimento arriva un solo bit ($k=1$).
+
+Ogni nodo del traliccio al generico stato $j$, all'istante $i$,è indicato come:
+\[S_i^j \quad j=1,2,\dots,2^{N-1}\]
+
+\textbf{Metrica del ramo:}
+\[\lambda(S_i^j,S_{i+1}^l)\]
+La distanza (di Hamming o euclidea) tra gli $n$ bit \textbf{ricevuti} al tempo $i$-esimo e gli $n$ bit \textbf{emessi} con la transizione dallo stato $j$-esimo allo stato $l$-esimo:
+\[S_i^j \Rightarrow S_{i+1}^l\]
+La metrica del ramo è ovviamente \textbf{additiva}, infatti ogni percorso $P$ composto da $M$ transizioni avrà la \textbf{metrica di percorso} (lunghezza del cammino) definita come \textbf{somma delle metriche di ramo calcolate per ogni transizione di stato che lo compone}:
+
+\[\Gamma(P)= \sum_{k=0}^{M-1}\lambda \left(S_{i+k}^{j_k}, S_{i+k+1}^{j_{k+1}}\right)\]
+
+\subsubsection{Concetto di Percorsi Sopravvissuti}
+Serve un ultimo strumento per l'algoritmo di Viterbi utile per il processo di \textit{scrematura} dei percorsi implicito nell'algoritmo stesso.
+Osservando il traliccio si nota che in ogni istante temporale, in un singolo nodo (stato) convergono sempre $2^k$ rami provenienti da stati precedenti.
+Poiché questi percorsi, da questo specifico stato in poi, dovranno necessariamente condividere lo stesso identico futuro, solo il cammino che ha accumulato finora la \textbf{metrica di percorso minore} (distanza minima) può \textit{matematicamente} fare parte del cammino ottimo globale.
+
+Il \textbf{percorso sopravvivente} $\hat{P}(S_i^j)$ sarà, tra quelli che giungono in quel nodo, quello  con la minore lunghezza del cammino.
+
+\subsubsection{Procedura Operativa dell'Algoritmo}
+\begin{enumerate}
+    \item \textbf{Inizializzazione:} $i = 0$ e $\Gamma(S_i^j), \space j=1,2,\dots,2^{N-1}$; si assume che lo stato iniziale e quello finale dopo $M$ passi siano composti da tutti \textit{zeri} (reset dei registri).
+
+    \item \textbf{Calcolo metriche di ramo:} Per $i=i+1$ si calcolano le $2^{N-1}$ metriche di ramo $\lambda(S_{i-1}^j,S_i^l)$ per ognuno dei $2^{N-1}$ stati.
+
+    \item \textbf{Selezione dei percorsi sopravviventi}: per ogni stato $S_i^j$ si calcolano le lunghezze dei percorsi incidenti e si memorizza il percorso sopravvivente $\hat{P}(S_i^j)$ e la nuova metrica di stato:
+    $$\Gamma(S_i^j) = \Gamma(\hat{P}(S_i^j))$$
+
+    \item \textbf{Iterazione:} si ripetono i passi precedenti fino al passo $M$.
+
+    \item \textbf{Decodifica:} si decodifica la sequenza ricevuta come la sequenza associata alle transizioni di stato dell'unico percorso sopravvivente.
+\end{enumerate}
+
+\subsection{Limiti e Complessità Computazionale}
+Nonostante l'algoritmo di Viterbi offra una decodifica ottima a massima verosimiglianza, la sua applicazione pratica è fortemente limitata dalla complessità computazionale e dai requisiti di memoria, che crescono esponenzialmente al crescere dei parametri del codificatore. Solamente di recente sono state realizzate implementazioni hardware ad-hoc.
+
+Per un codice convoluzionale $(n, k, N)$, ad ogni passo (istante temporale) sul traliccio:
+\begin{itemize}
+    \item Si hanno $2^{k(N-1)}$ stati possibili. Il decodificatore deve mantenere attivi e memorizzare $2^{k(N-1)}$ \textbf{cammini sopravviventi} (con relative sequenze di bit) e i corrispondenti $2^{k(N-1)}$ \textbf{valori di metrica di percorso}.
+    \item Per ogni stato si hanno $2^k$ rami provenienti dall'istante precedente. Il decodificatore deve quindi calcolare $2^k$ \textbf{metriche di ramo} per ogni singolo stato, aggiornare le metriche di percorso e confrontarle per selezionare il percorso sopravvivente.
+\end{itemize}
+
+A causa di questa dipendenza esponenziale sia dal numero di bit in ingresso $k$, sia dalla lunghezza del vincolo $N$, l'implementazione hardware dell'algoritmo di Viterbi diventa rapidamente proibitiva. Per questo motivo, nelle applicazioni reali (come le comunicazioni spaziali o satellitari), l'utilizzo di Viterbi è limitato a codici con valori di $k$ e $N$ dell'ordine di grandezza di $10$. Per codici più complessi si ricorre solitamente a metodi sub-ottimi, come la decodifica sequenziale.

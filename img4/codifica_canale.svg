@@ -1,0 +1,78 @@
+<svg width="800" height="500" viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+    </marker>
+    <style type="text/css">
+      .box-source { fill: #e3f2fd; stroke: #1565c0; stroke-width: 2; rx: 5; ry: 5; }
+      .box-channel-eq { fill: #ede7f6; stroke: #512da8; stroke-width: 2; }
+      .box-physical-container { fill: #e0f2f1; stroke: #009688; stroke-width: 2; stroke-dasharray: 5,5; }
+      .box-channel-coding { fill: #ffebee; stroke: #c62828; stroke-width: 2; rx: 5; ry: 5; }
+      .box-channel-real { fill: #b2dfdb; stroke: #00796b; stroke-width: 2; rx: 5; ry: 5; }
+      .text-main { font-family: Arial, Helvetica, sans-serif; font-size: 14px; text-anchor: middle; dominant-baseline: middle; fill: #212121; }
+      .text-red { font-family: Arial, Helvetica, sans-serif; font-size: 14px; font-weight: bold; text-anchor: middle; dominant-baseline: middle; fill: #c62828; }
+      .text-label { font-family: Arial, Helvetica, sans-serif; font-size: 18px; font-weight: bold; fill: #333; }
+      .connector { stroke: #333; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+      .connector-dashed { stroke: #666; stroke-width: 1.5; fill: none; stroke-dasharray: 8,4; }
+    </style>
+  </defs>
+
+  <g transform="translate(50, 80)">
+    <text x="130" y="-20" class="text-label" text-anchor="middle">Sorgente</text>
+    <rect x="0" y="0" width="120" height="60" class="box-source"/>
+    <text x="60" y="30" class="text-main">Sorgente</text>
+    <rect x="140" y="0" width="120" height="60" class="box-source"/>
+    <text x="200" y="20" class="text-main">Codifica di</text>
+    <text x="200" y="40" class="text-main">sorgente</text>
+    <line x1="120" y1="30" x2="138" y2="30" class="connector"/>
+  </g>
+
+  <g transform="translate(400, 110)">
+    <ellipse cx="0" cy="0" rx="100" ry="40" class="box-channel-eq"/>
+    <text x="0" y="-5" class="text-main" font-weight="bold" fill="#512da8">Canale equivalente</text>
+    <text x="0" y="15" class="text-main" font-weight="bold" fill="#512da8">privo di rumore</text>
+  </g>
+
+  <g transform="translate(530, 80)">
+      <text x="130" y="-20" class="text-label" text-anchor="middle">Destinazione</text>
+    <rect x="0" y="0" width="120" height="60" class="box-source"/>
+    <text x="60" y="20" class="text-main">Decodifica di</text>
+    <text x="60" y="40" class="text-main">sorgente</text>
+    <rect x="140" y="0" width="120" height="60" class="box-source"/>
+    <text x="200" y="30" class="text-main">Destinazione</text>
+    <line x1="120" y1="30" x2="138" y2="30" class="connector"/>
+  </g>
+
+  <line x1="312" y1="110" x2="298" y2="110" class="connector"/>
+  <line x1="502" y1="110" x2="528" y2="110" class="connector"/>
+
+
+  <ellipse cx="400" cy="350" rx="380" ry="100" class="box-physical-container" />
+
+  <g transform="translate(100, 320)">
+    <rect x="0" y="0" width="140" height="60" class="box-channel-coding"/>
+    <text x="70" y="20" class="text-red">Codifica di</text>
+    <text x="70" y="40" class="text-red">canale</text>
+
+    <rect x="180" y="-10" width="240" height="80" class="box-channel-real"/>
+    <text x="300" y="20" class="text-main" font-weight="bold" font-size="16px">Canale reale</text>
+    <text x="300" y="45" class="text-main" font-weight="bold" font-size="16px">rumoroso</text>
+
+    <rect x="460" y="0" width="140" height="60" class="box-channel-coding"/>
+    <text x="530" y="20" class="text-red">Decodifica di</text>
+    <text x="530" y="40" class="text-red">canale</text>
+
+    <line x1="140" y1="30" x2="178" y2="30" class="connector"/>
+    <line x1="420" y1="30" x2="458" y2="30" class="connector"/>
+  </g>
+
+  <line x1="100" y1="142" x2="100" y2="318" class="connector"/>
+  <text x="80" y="240" class="text-label">X</text>
+
+  <line x1="700" y1="318" x2="700" y2="142" class="connector"/>
+  <text x="720" y="240" class="text-label">Y</text>
+
+  <line x1="320" y1="130" x2="150" y2="280" class="connector-dashed"/>
+  <line x1="480" y1="130" x2="650" y2="280" class="connector-dashed"/>
+
+</svg>

@@ -1,0 +1,440 @@
+\part{Teoria della Codifica di Sorgente}
+La comunicazione, in ogni sua forma, contiene un certo grado di ridondanza. La codifica di sorgente ha lo scopo di ridurre questa ridondanza senza alterare il contenuto informativo, ottimizzando la rappresentazione dei dati. Fin dai tempi antichi, sono state adottate strategie naturali per rendere più efficiente la trasmissione dell'informazione. Un esempio è l'uso delle abbreviazioni nei manoscritti medievali, in cui simboli speciali sostituivano parole comuni per risparmiare spazio e tempo nella scrittura. Anche i segnali di fumo, impiegati da diverse culture, seguivano schemi codificati per trasmettere messaggi con il minimo numero di segnali possibile. Un altro caso significativo è il codice Morse (1838), che assegnava sequenze più brevi ai caratteri più frequenti, anticipando il principio della codifica ottimale. Tuttavia, è con lo sviluppo della Teoria dell'Informazione che il processo di codifica di sorgente è stato formalizzato, fornendo una base matematica rigorosa per la compressione dei dati.
+
+\chapter{Principi di Codifica di Sorgente}
+
+L'alfabeto della sorgente per quanto capace di veicolare informazione non è quasi mai ideale per la trasmissione efficiente dell'informazione stessa. La codifica di sorgente quindi trasforma i simboli in quelli di un altro alfabeto, e in ricezione si effettuerà il processo inverso ottenendo l'informazione nell'alfabeto originale. 
+Le codifiche si possono raggruppare in due categorie fondamentali: quelle che codificano ogni singolo simbolo in una nuova \textit{parola} e le codifiche che lavorano su parole ottenendone di nuove nell'alfabeto di codifica.
+
+Un'ulteriore distinzione, essenziale per comprendere i meccanismi di compressione, riguarda la lunghezza delle stringhe prodotte:
+\begin{itemize}
+    \item \textbf{Codici a lunghezza fissa:} Tutte le parole di codice generate hanno la medesima lunghezza (un classico esempio è la codifica ASCII a 8 bit per carattere). Sono semplici da gestire e decodificare, ma non ottimizzano lo spazio.
+    \item \textbf{Codici a lunghezza variabile:} Le parole di codice hanno lunghezze differenti. L'efficienza (ovvero la compressione dei dati) si ottiene assegnando stringhe di bit più brevi ai simboli che si presentano con maggiore probabilità, e stringhe più lunghe ai simboli più rari.
+\end{itemize}
+% =========================================================
+% SEZIONE 1: Definizioni e Classificazione
+% =========================================================
+\section{Definizioni e Classificazione dei Codici}
+
+\subsection{Codifica di Sorgente}
+Diamo una definizione di codice:
+\begin{definition}
+Sia $S$  una sorgente con alfabeto $\{s_1, s_2, \dots, s_m\}$.\newline
+Un codice è una funzione che per ogni sequenza di simboli della sorgente $S$ associa una sequenza di simboli di un alfabeto $X = {x_1, x_2, \dots, x_r}$. La funzione deve essere \textbf{iniettiva}.
+\end{definition}
+
+Consideriamo un alfabeto $A$ e l'insieme delle stringhe generabili $A^*$.
+Supponiamo di codificare in alfabeto \textbf{binario} una sequenza di messaggi in un alfabeto qualsiasi $X = {x_1, x_2, \dots, x_k}$
+\begin{enumerate}
+  \item si identifica il \textbf{codice}: un insieme $k$ \textit{parole} di $A^*$;
+  \item ad ogni simbolo di X si assegna \textbf{univocamente} una parola del codice. 
+\end{enumerate}
+Come risultato quindi una stringa di $X^*$ viene codificata in una sequenza di stringhe di $A^*$.
+
+
+
+\subsubsection{Esempi di codice}
+\begin{itemize}
+\item La numerazione telefonica: due numeri telefonici sono tali per cui uno non è prefisso di un altro.
+\item Codice Morse: codifica binaria che assegna una codifica più concisa alle lettere più frequenti.
+\item Codice ASCII: ogni carattere è codificato con un numero di 8 bit.
+\end{itemize}
+
+\subsubsection{Codifica a Blocchi \textbf{non} singolari}
+Un codice a blocchi si dice \textbf{non singolare} se ogni simbolo della sorgente è mappato in una parola di codice distinta. Formalmente, per ogni coppia di simboli diversi $x_i \neq x_j$, le rispettive parole di codice devono essere diverse:
+\[ C(x_i) \neq C(x_j) \]
+
+Questa è ovviamente una condizione necessaria per avere un codice non ambiguo sui singoli caratteri, ma \textbf{non è sufficiente} per decodificare correttamente un messaggio composto da una \textit{sequenza} di simboli (estensione del codice).
+
+Si consideri ad esempio il seguente codice, che risulta chiaramente non singolare:
+\begin{itemize}
+    \item $a \rightarrow  01$
+    \item $b \rightarrow  10$
+    \item $c \rightarrow  1$
+\end{itemize}
+Ricevendo in input $101$ un decodificatore può alternativamente decodificare il messaggio con $ca$ o $bc$.
+
+\subsection{Decifrabilità dei Codici}
+Appurato che la \textit{non singolarità} di un codice non è sufficiente per renderlo non ambiguo, serve introdurre ulteriori condizioni. Nella pratica della trasmissione dati, i messaggi sono formati da flussi continui di simboli concatenati, definiti come \textit{estensione} del codice. Per ricostruire il messaggio originale senza errori, l'estensione del codice non deve presentare alcuna ambiguità. Per risolvere questo problema, si definiscono classi di codici con requisiti via via più stringenti.
+
+\subsubsection{Codici Univocamente Decifrabili (UD)}
+
+Un codice che permette di separare i simboli senza alcuna ambiguità si dice \textbf{univocamente decifrabile}. Questa proprietà è una \textit{garanzia} per la correttezza della decodifica. Codici \textbf{univocamente decifrabili} sono un sottoinsieme della famiglia dei codici non singolari.
+
+\begin{definition}
+    Un codice è detto univocamente decifrabile (\textbf{UD}) se ogni sequenza di parole del codice corrisponde ad una sola sequenza di simboli della sorgente.
+    $C$ è $UD$ se: $\forall x_1, x_2, \dots, x_n, y_1, y_2, \dots, y_m \in C$ e se $x_1x_2\dots x_n = y_1y_2\dots y_m \implies n = m$ con $x_i = y_i \space \forall i$
+\end{definition}
+
+Rimangono due problematiche da affrontare: come costruire in modo sistematico codici UD e come riconoscerli.
+
+\paragraph*{Il Ritardo di Decifrazione}
+Garantire che un codice sia UD assicura la corretta decodifica, ma solleva un ulteriore problema pratico: il \textbf{ritardo di decifrazione}. In alcuni codici UD, per poter determinare con certezza il primo simbolo del messaggio, il ricevitore potrebbe essere costretto a leggere l'intera sequenza fino alla fine (ritardo illimitato), oppure ad attendere l'arrivo di successivi $k$ simboli (ritardo limitato a $k$). Per le comunicazioni efficienti e in tempo reale, è preferibile abbattere questo ritardo.
+
+\subsubsection{Codici Istantanei (o a Prefisso)}
+Per azzerare il ritardo di decifrazione, si definisce un sottoinsieme più restrittivo di codici. Un codice UD che si può decodificare senza la necessità di attendere i simboli della parola successiva si dice \textbf{istantaneo} o \textbf{codice a prefisso}.
+
+Condizione \textbf{necessaria e sufficiente} perché un codice sia istantaneo è che \textbf{nessuna parola di codice sia prefisso di un'altra parola}.
+
+Con un codice prefisso, individuare le interruzioni tra una parola di codice e la successiva è immediato: leggendo il flusso in input, non appena i bit accumulati formano una parola di codice legittima, essa viene decodificata e si riparte dal bit successivo. Non vi è mai la necessità di \textit{guardare avanti}.
+
+\textit{Nota:} Una strategia banale per ottenere un codice univoco e istantaneo consiste nell'avere tutte le parole della stessa lunghezza, come ad esempio nel codice ASCII. La semplicità è controbilanciata dalla implicita rinuncia a qualsiasi forma di ottimizzazione del codice.
+\begin{theorem}
+    I codici istantanei sono univocamente decifrabili.
+\end{theorem}
+\begin{proof}
+Seguendo l'albero che definisce il codice, si sceglie il percorso in base ai simboli in input da decodificare. Arrivati a una foglia, una parola di codice è decodificata in modo univoco e si riparte quindi dalla radice.
+\end{proof}
+
+%TODO: GRAFICI DI ESEMPIO CON ALBERI
+\subsection{Rappresentazione ad Albero dei Codici}
+I codici binari possono essere intuitivamente modellati e analizzati tramite grafi ad albero, e più specificamente tramite alberi binari:
+\begin{itemize}
+    \item La radice dell'albero rappresenta la stringa vuota $\lambda$.
+    \item Da ogni nodo possono diramarsi al massimo due archi: convenzionalmente, l'arco sinistro è etichettato con il bit $0$ e l'arco destro con il bit $1$.
+    \item Un percorso dalla radice a un nodo qualsiasi rappresenta una sequenza binaria, data dalla concatenazione delle etichette degli archi attraversati.
+\end{itemize}
+L'albero di un generico \textbf{codice UD non istantaneo} avrà alcune parole di codice su nodi intermedi. Quindi una parola di codice può essere il prefisso di una parola più lunga, posizionata più in profondità su un ramo discendente di quel cammino. Questo rende necessario attendere ulteriori bit prima di poter decodificare il simbolo senza ambiguità.
+
+Al contrario, se il codice è \textbf{istantaneo (o a prefisso)}, nessuna parola può essere prefisso di un'altra. Sull'albero, questo si traduce in una regola geometrica assoluta: \textbf{le parole di codice si trovano esclusivamente sulle foglie}. Nessun nodo che rappresenta una parola di codice può avere figli.
+
+\subsubsection{Decodifica di un codice istantaneo}
+Avere le parole di codice confinate sulle foglie rende il processo di decodifica meccanico, immediato e privo di ritardo. 
+Il decodificatore legge il flusso di bit in ingresso e, partendo dalla radice, scende lungo l'albero seguendo i rami (a sinistra se legge $0$, a destra se legge $1$). Non appena il cammino raggiunge una foglia, l'algoritmo emette il simbolo sorgente corrispondente e riparte dalla radice per decodificare il prossimo simbolo.
+
+\subsubsection{Codice Completo}
+Analizzando la struttura geometrica dell'albero, è possibile valutare l'efficienza della codifica. Se in un albero è presente un nodo interno dal quale si dirama un solo figlio, significa che si sta utilizzando un bit in più che non porta ad alcuna reale biforcazione logica o scelta, introducendo uno spreco nella lunghezza della parola.
+\begin{definition}
+    Un albero, e di conseguenza il codice istantaneo che esso rappresenta, si dice \textbf{completo} se ogni nodo interno ha esattamente due figli.
+\end{definition}
+In un codice completo, lo spazio delle combinazioni binarie è sfruttato in modo ottimale, senza "rami morti" che allungherebbero inutilmente le sequenze trasmesse.
+
+
+\subsection{Algoritmo di Sardinas-Patterson}
+Questo algoritmo, proposto in origine nel 1953 da August Sardinas e George Patterson, fornisce un criterio per stabilire, in tempo polinomiale, se un codice è univocamente decifrabile. Per farlo, effettua una ricerca sistematica di una stringa che ammette la scomposizione in due codeword.
+Costruendo due possibili fattorizzazioni si possono presentare due casi:
+\begin{itemize}
+    \item una fattorizzazione è contenuta in una parola dell'altra;
+    \item una fattorizzazione comincia con un prefisso che a sua volta è suffisso di una delle altre parole dell'altra fattorizzazione.
+\end{itemize}
+Se un suffisso coincide con una parola di codice, allora il codice \textbf{non} è UD.
+
+L'algoritmo si basa sul seguente teorema:
+\begin{theorem}
+Dato un codice $C$ su un alfabeto $A$, si considerano gli insiemi $S_0,S_1,\dots,S_n$ tali che:
+\begin{itemize}
+    \item $S_0 = C$
+    \item $S_i = \{w \in A^* | \exists a \in S_0, \exists b \in S_{i-1}\}$ tale che $a = bw \space \vee b = aw$
+\end{itemize}
+La condizione necessaria e sufficiente affinché $C$ sia \textbf{UD} è quindi:
+\[\forall n >0 \space , S_0\cap S_n = \emptyset \]
+Vale a dire che tra i suffissi generati nessuno dovrà corrispondere a una parola di codice.
+$\blacksquare$
+\end{theorem}
+
+\subsubsection{Condizioni di arresto}
+L'algoritmo è implicitamente definito dal teorema; essendo l'insieme dei suffissi generabili \textit{finito}, da un certo momento comincerà a generare insiemi già analizzati. Si hanno quindi tre condizioni di arresto:
+\begin{enumerate}
+    \item $\exists i > 0, S_0 \cap S_i \neq \emptyset \implies \text{il codice \textbf{NON è UD}}$
+    \item $\exists i > 0, S_i = \emptyset \implies \text{il codice \textbf{è UD}}$
+    \item $\exists i, j > 0 \text{ con } i \neq j, S_i = S_j \implies \text{il codice \textbf{è UD}}$
+\end{enumerate}
+La complessità dell'algoritmo è $O(rL)$, con $r$ pari al numero di parole di codice ed $L$ pari alla somma delle lunghezze di tali parole.
+
+\begin{esempio}{Verifica di un codice con Sardinas-Patterson}
+Sia dato il codice $C = \{1, 011, 01110, 1110, 10011\}$. Vogliamo verificare se è univocamente decifrabile calcolando gli insiemi dei suffissi.
+
+\textbf{Passo 0:} L'insieme iniziale corrisponde al codice stesso.
+\[ S_0 = \{1, 011, 01110, 1110, 10011\} \]
+
+\textbf{Passo 1 ($S_1$):} Cerchiamo le parole in $S_0$ che sono prefisso di altre parole in $S_0$ ed estraiamo i suffissi:
+\begin{itemize}
+    \item $1$ è prefisso di $1110 \implies$ il suffisso è $110$
+    \item $1$ è prefisso di $10011 \implies$ il suffisso è $0011$
+    \item $011$ è prefisso di $01110 \implies$ il suffisso è $10$
+\end{itemize}
+Otteniamo quindi: $S_1 = \{110, 0011, 10\}$. 
+Poiché $S_0 \cap S_1 = \emptyset$ (nessun suffisso è una parola del codice), l'algoritmo procede.
+
+\textbf{Passo 2 ($S_2$):} Confrontiamo l'insieme $S_0$ con l'insieme $S_1$. Cerchiamo prefissi di $S_0$ nelle parole di $S_1$, e viceversa:
+\begin{itemize}
+    \item $1$ (da $S_0$) è prefisso di $110$ (in $S_1$) $\implies$ il suffisso è $10$
+    \item $10$ (da $S_1$) è prefisso di $10011$ (in $S_0$) $\implies$ il suffisso è $011$
+\end{itemize}
+Otteniamo quindi l'insieme: $S_2 = \{10, 011\}$.
+
+\textbf{Verifica e Arresto:} 
+Controlliamo l'intersezione tra l'ultimo insieme generato e quello di partenza: 
+\[ S_0 \cap S_2 = \{011\} \neq \emptyset \]
+Avendo trovato un suffisso ($011$) che corrisponde esattamente a una parola del codice originale, l'algoritmo si arresta per la \textbf{Condizione 1}. Possiamo affermare che il codice \textbf{NON} è univocamente decifrabile.
+\end{esempio}
+% =========================================================
+% SEZIONE 2: Limiti Matematici
+% =========================================================
+\section{Disuguaglianze di Kraft e Kraft-McMillan}
+
+Avendo a disposizione un alfabeto sorgente con $m$ simboli e un alfabeto di codice $\Gamma$ di dimensione $d$, è sempre possibile realizzare un codice \textit{istantaneo} o \textit{UD} in cui le parole abbiano specifiche lunghezze $l_1, l_2, \dots, l_m$?
+No, non è \textit{sempre} possibile! Per garantire la decifrabilità, le lunghezze scelte non possono essere arbitrarie, ma devono rispettare una precisa condizione.
+
+Definiamo prima la quantità $K(C)$ conosciuta come Somma di Kraft:
+
+\begin{definition}[Somma di Kraft]
+
+    Data una codifica $C = \{c_1,c_2,\dots c_m\}$ su un alfabeto $A$ di cardinalità $|A|= d$, siano $l_i = |c_i|$ le lunghezze delle rispettive parole di codice.
+    
+    Si definisce la Somma di Kraft la quantità:
+    \[K(C)= \sum_{i=1}^m d^{-l_i}\]
+\end{definition}
+Ad esempio:
+\[C=\{00, 001,10,11\},A={0,1} \rightarrow K(C)= 2^{-2}+2^{-3}+2^{-2}+2^{-2}= \frac{7}{8}\]
+
+\subsection{Diseguaglianza di Kraft (per codici \textit{istantanei})}
+Introdotta nel 1949 da Leon Kraft questa diseguaglianza è di fondamentale importanza per la codifica; definisce una condizione da rispettare per le lunghezze delle parole di un codice istantaneo.
+
+\begin{theorem}
+Per qualsiasi codice \textbf{istantaneo (a prefisso)} su un alfabeto di dimensione $d$, le lunghezze delle parole di codice $l_1, l_2, \dots, l_m$ devono necessariamente soddisfare la relazione:
+\[K(C)= \sum_{i=1}^m d^{-l_i} \leq 1\]
+\textbf{Specularmente}, se la relazione è soddisfatta per un insieme di lunghezze di parole di codice, allora \textit{esiste} un codice istantaneo con quelle lunghezze di parole di codice.
+\end{theorem}
+ 
+\textbf{Attenzione:} La relazione è una condizione \textbf{\textit{necessaria e sufficiente per l'esistenza di un codice istantaneo con quelle lunghezze}}. Se un codice ha l'insieme delle lunghezze delle parole che rispetta la diseguaglianza di Kraft, \textbf{non è automatico} che il codice sia istantaneo; sarà comunque necessario verificare che sia istantaneo.
+%TODO: esempi di verifiche di codici con la diseguaglianza di Kraft
+
+
+\subsubsection{Diseguaglianza di Kraft - dimostrazione condizione sufficiente}
+Dimostriamo la \textbf{condizione sufficiente per l'esistenza di un codice istantaneo}.
+
+\begin{proof}
+Per ogni insieme di lunghezze $l_1,l_2,\dots,l_m$, se la diseguaglianza di Kraft è soddisfatta, si può \textbf{sempre} costruire un albero, di \textit{ordine $d$}.
+
+Indichiamo con:
+\begin{itemize}
+    \item $n_1$ il numero dei \textit{valori} di lunghezza pari a 1;
+    \item $n_2$ il numero dei \textit{valori} di lunghezza pari a 2;
+    \item $\dots$
+    \item $n_L$ il numero dei \textit{valori} di lunghezza pari a L (il valore massimo);
+\end{itemize}
+
+
+\begin{enumerate}[label=\textbf{Passo \arabic*.}]
+    \item Sia $L=\max(l_i)$, con $1\leq i \leq m$
+    \item $\sum_{i=1}^m n_i=m$, con $m$ il numero di parole di codice
+    \item Per ipotesi vale la diseguaglianza di Kraft
+    $$\sum_{i=1}^m d^{-l_i}= \sum_{i=1}^L n_i d^{-i} \leq 1$$
+    Ovvero:
+    $$ n_1d^{-1} + n_2d^{-2} + n_3d^{-3} + \dots + n_Ld^{-L} \leq 1$$
+    \item Si moltiplica per $d$:
+    $$ n_1 + n_2d^{-1} + n_3d^{-2} + \dots + n_Ld^{-L+1} \leq d$$
+    \item Vale per il primo elemento che $n_1 \leq d$, in quanto a profondità $1$ dalla radice saranno possibili al massimo $d$ diramazioni, quindi:
+    $$ n_2d^{-1} + n_3d^{-2} + \dots + n_Ld^{-L+1} \leq d - n_1$$
+    
+    \item Si moltiplica ancora per $d$:
+     $$ n_2+ n_3d^{-1} + \dots + n_Ld^{-L+2} \leq d(d-n_1)$$
+
+    \item Vale che $n_2 \leq d(d-n_1)$, si moltiplica ancora per $d$, procedendo come in precedenza
+
+    \item Si deduce che $n_1 \leq d,\space n_2\leq d(d-n_1),\space n_3\leq d(d^2-n_1d-n_2)$ \textit{e così via}
+
+    \item Questo insieme di diseguaglianze assicura che \textbf{è possibile} costruire un albero \textit{$d$-ario} che per ogni livello a profondità $i$ dalla radice ha:
+    \begin{enumerate}
+        \item $n_1$ foglie a profondità $1$ e $d-n_1$ nodi interni
+        \item $n_2$ foglie a profondità $2$ e $d(d-n_1)-n_2$ nodi interni
+        \item $n_3$ foglie a profondità $3$ e $d(d^2-n_1d-n_2)-n_3$ nodi interni
+        \item $\dots$
+        \item $n_L$ foglie di profondità massima $L$
+    \end{enumerate}
+
+     \item Si ottiene alla fine un albero con $n_1 + n_2 + \dots + n_L$ foglie; ad ogni foglia corrisponde una parola di codice ottenuta concatenando i simboli presenti sul percorso per raggiungere la foglia.
+\end{enumerate}
+A profondità crescenti, aumenta il numero di scelte possibili per i cammini e le rispettive foglie.
+
+\end{proof}
+
+%TODO:grafico abero d-ario
+
+\subsection{Disuguaglianza di McMillan (per codici UD)}
+McMillan pochi anni dopo Kraft propose una generalizzazione relativa a \textit{tutti} i codici univocamente decifrabili della diseguaglianza di Kraft.
+\begin{theorem}
+    Per un qualsiasi codice univocamente decifrabile su un alfabeto di cardinalità $d$, le $l_1,l_2,\dots l_m$ lunghezze delle parole \textbf{devono} soddisfare la diseguaglianza di Kraft:
+    \[\sum_{i=1}^m d^{-l_i} \leq 1\]
+\end{theorem}
+\textbf{Specularmente}, se la relazione è soddisfatta per un insieme di lunghezze, allora \textit{esiste} un codice istantaneo con quelle lunghezze di parole.
+%TODO: esempio con diseguaglianza di McMillan
+
+\subsubsection{Condizione Necessaria (Dimostrazione di McMillan)}
+Mentre la condizione di Kraft garantisce che la diseguaglianza sia \textbf{sufficiente per costruire un codice istantaneo}, la \textbf{condizione necessaria} stabilisce che \textbf{ogni} codice univocamente decifrabile (UD) deve \textbf{obbligatoriamente soddisfare tale vincolo}.
+
+Non è quindi possibile trovare un codice UD le cui lunghezze delle parole violino la diseguaglianza di Kraft. Per dimostrare questa necessità, si utilizza l'approccio algebrico di McMillan.
+\begin{proof}
+Sia $C$ un codice univocamente decifrabile su un alfabeto di ordine $d$ e con lunghezze $l_1, l_2, \dots, l_m$, con $L$ lunghezza massima.
+
+Consideriamo la quantità elevata alla potenza intera arbitraria $n$:
+\[\left(\sum_{i=1}^m d^{-l^i}\right)^n = \left(d^{-l^1} + d^{-l^2} + \dots + d^{-l^m}\right)^n\]
+
+Sviluppando la potenza si ottengono $m^n$ termini, ognuno dei quali è nella forma $d^{-l_{i_1}} d^{-l_{i_2}} \dots d^{-l_{i_n}} = d^{-k}$, dove $k$ è la lunghezza totale di una sequenza di $n$ parole di codice (con $n \leq k \leq nL$).
+
+Raggruppando i termini con lo stesso esponente $k$, possiamo riscrivere lo sviluppo come:
+\[\left(\sum_{i=1}^m d^{-l_i}\right)^n = \sum_{k=n}^{nL} N_k d^{-k}\]
+dove $N_k$ è il numero di sequenze di $n$ parole di codice aventi lunghezza totale $k$. 
+
+\textbf{Essendo il codice UD}, ogni sequenza di parole è decifrabile in modo univoco. Pertanto, il numero di sequenze distinte di lunghezza $k$ non può superare il totale delle combinazioni possibili con $d$ simboli su lunghezza $k$, ovvero $N_k \leq d^k$.
+
+Sostituendo questa diseguaglianza otteniamo:
+\[\left(\sum_{i=1}^m d^{-l_i}\right)^n \leq \sum_{k=n}^{nL} d^k d^{-k} = \sum_{k=n}^{nL} 1 = nL - n + 1 \leq nL\]
+
+Estraendo la radice $n$-esima si ha per ogni $n$:
+\[\sum_{i=1}^m d^{-l_i} \leq (nL)^{\frac{1}{n}}\]
+Dato che $\lim_{n\to\infty} (nL)^{\frac{1}{n}} = 1$, si conclude che:
+\[\sum_{i=1}^m d^{-l_i} \leq 1\]
+\end{proof}
+
+
+\subsection{Teorema di Kraft-McMillan (per codici UD)}
+Nel 1956, McMillan estese la validità della diseguaglianza di Kraft all'intera classe dei codici univocamente decifrabili (UD), dimostrando che il vincolo sulle lunghezze non è limitato ai soli codici istantanei.
+
+\begin{theorem}
+    Condizione \textbf{necessaria e sufficiente} affinché esista un codice univocamente decifrabile (UD) con lunghezze delle parole $l_1, l_2, \dots, l_m$ su un alfabeto di dimensione $d$ è che sia soddisfatta la relazione:
+    \[ \sum_{i=1}^m d^{-l_i} \leq 1 \]
+\end{theorem}
+Questa dimostrazione della condizione necessaria consente di concludere che se la diseguaglianza di Kraft-McMillan \textbf{non è soddisfatta} per un insieme di lunghezze, \textbf{non può esistere alcun codice UD} avente parole di codice con tali lunghezze.
+
+Ciò implica che non vi è alcun vantaggio, in termini di compressione o brevità delle parole, nel rinunciare alla \textit{proprietà di istantaneità}: i limiti matematici per i codici UD sono gli stessi dei codici a prefisso.
+
+% =========================================================
+% SEZIONE 3: Lunghezza Media e Teorema di Shannon
+% =========================================================
+\section{Lunghezza Media e Teorema di Shannon}
+Dopo aver stabilito le proprietà necessarie per avere un codice univocamente decifrabile, ci possiamo porre il problema di scegliere il \textit{migliore} tra un insieme di codici UD. Per farlo ci serve una metrica, stabilita la quale troveremo quali sono i limiti \textit{invalicabili} che devono rispettare i codici.
+
+\subsection{Lunghezza media e Codice Ottimo}
+Avendo stabilito le condizioni necessarie e sufficienti per garantire l'univocità della decodifica, l'obiettivo ora è quello di avere codici \textit{UD} con la minore lunghezza \textbf{media} possibile; introduciamo quindi la \textbf{ $L_S$} come metrica per valutarli.
+Tra tutti i codici \textbf{UD} per una data sorgente e un dato alfabeto di codice, quello con la $L_S$ minore è detto \textbf{codice compatto}.
+
+Dati:
+\begin{itemize}
+    \item $C$ codice con parole $c_1,c_2,\dots,c_m$ di lunghezza $l_1,l_2,\dots,l_m$ 
+    \item $S$ alfabeto di sorgente
+    \item $X$ alfabeto di codice
+    \item $p_1,p_2,\dots,p_m$ le probabilità dei simboli della sorgente
+\end{itemize}
+
+Si definisce \textbf{lunghezza media del codice}:
+\[L_S(C)=\sum_{i=1}^m{p_il_i} \]
+
+
+\subsection{Primo Teorema di Shannon}
+\label{shannon1}
+Abbiamo stabilito qual è il nostro obiettivo per i codici univocamente decifrabili, ora è di fondamentale importanza determinare come individuarlo. Il primo teorema di Shannon fornisce un limite inferiore per la compressione senza perdita di informazione.
+
+\begin{theorem}[Primo Teorema di Shannon]
+    Sia $C$ un codice univocamente decifrabile per una sorgente \textit{senza memoria} $S$ con probabilità $p_1,p_2,\dots,p_m$, alfabeto $X$ di cardinalità $d$, allora
+    \[L_S(C)\geq \frac{H(S)}{\log d}\]
+Quindi per codici binari la $L_S$ deve essere almeno pari all'entropia della sorgente.
+Considerando la definizione di entropia per la quale la base del logaritmo è $d$, allora si ha che
+\[L_S(C) \geq H_d(S)\]
+\end{theorem}
+
+\begin{proof}
+\begin{itemize}
+    \item Se $C$ è un codice \textbf{UD}, allora $K(C) \leq 1$
+    \item Dal Lemma del Logaritmo si prova che $\sum_{i=1}^m p_i \log\frac{1}{p_i} \leq \sum_{i=1}^m p_i \log \frac{1}{q_i}$, con l'uguaglianza valida solo se $q_i = p_i \space \forall{i}$
+    \item Si considera in particolare $q_i = \frac{d^{-l_i}}{K(C)} = \frac{d^{-l_i}}{\sum_{i=1}^m d^{-l_i}}$ (\textit{normalizzazione} per $d^{-l_i}$)
+    \item Se ne deduce che:
+\begin{align*}
+H(S) = -\sum_{i=1}^m p_i\log p_i &\leq \sum_{i=1}^m p_i\log \frac{1}{q_i} \\
+     &= -\sum_{i=1}^m p_i\log q_i = - \sum_{i=1}^m p_i\log\frac{d^{-l_i}}{K(C)} \\
+     &= -\sum_{i=1}^m p_i \left( \log d^{-l_i} - \log K(C) \right) \\
+     &= - \sum_{i=1}^m p_i \log d^{-l_i} + \sum_{i=1}^m p_i \log K(C) \\
+     &= \sum_{i=1}^m p_i l_i \log(d) + \underbrace{\log K(C)}_{\leq 0} \leq L_S(C)\log(d)
+\end{align*}
+Quindi $H(S) \leq L_S(C)\log(d) \rightarrow \frac{H(S)}{\log(d)} \leq L_S(C)$ 
+\end{itemize}
+
+In caso di codice \textbf{UD} per cui vale $\sum_{i=1}^m d^{-l_i} = 1$, l'uguaglianza si ha solo se $l_i = \log_d(\frac{1}{p_i})$ e quindi $L_S(C) = H(S)$. Ciò avviene se e solo se $\log_d(\frac{1}{p_i})$ è un valore \textbf{intero} per ogni $i$.
+\end{proof}
+
+% =========================================================
+% SEZIONE 4: Metriche di Trasmissione ed Efficienza
+% =========================================================
+\section{Parametri di Trasmissione ed Efficienza}
+
+\subsection{Notazione e Rate di Trasmissione}
+\begin{itemize}
+    \item $r$ è la \textbf{symbol rate}, misurata in $\frac{\text{simboli}}{\text{secondo}}$
+    \item $R$ è la \textbf{information Rate}, misurata in $\frac{\text{bit}}{\text{secondo}}$
+    \item $r_b$ è il \textbf{signalling rate} (o \textbf{bit rate}), misurato in $\frac{\text{binit}}{\text{secondo}}$
+\end{itemize}
+
+Per una sorgente che emette $n$ simboli (con $n \gg 1$), l'informazione totale sarà pari a \textit{circa} $R$; la \textit{velocità di informazione} della sorgente è:
+\[ R = \frac{n \cdot H(X)}{\frac{n}{r}} = r \cdot H(X) \left[\frac{\text{bit}}{\text{secondo}}\right]\]
+
+Dal teorema di Shannon un'informazione proveniente da una sorgente discreta senza memoria può essere codificata con \textbf{cifre binarie} e trasmessa su di un canale senza rumore con un bit rate $r_b$ vincolato dalla relazione
+\[r_b \geq R \space \left[\frac{\text{binit}}{\text{secondo}}\right] \]
+
+Data una sorgente discreta senza memoria con alfabeto di $M$ simboli, il suo information rate $R$ sarà:
+\begin{itemize}
+    \item $R = r\log_2(M)$ se i simboli sono \textbf{equiprobabili} $\rightarrow$ l'informazione è trasmessa con efficienza con simboli \textit{M-ari} e symbol rate $r$.
+    \item $R = rH(X) < r\log_2(M)$ con simboli \textbf{NON equiprobabili} $\rightarrow$ la strategia ideale consiste nel tenere conto delle diverse probabilità (e contenuto informativo) dei simboli, per poter trasmettere ad una velocità prossima ad $R$.
+\end{itemize}
+
+\subsubsection{Information rate e codifica binaria}
+Per le codifiche binarie dei simboli di una sorgente, l'output del codificatore sarà equivalente a quello di una sorgente binaria con \textbf{entropia $\Omega(p)$} e information rate \textbf{$R = r_b\Omega(p)$}, per un opportuno valore di $p$.
+Un codificatore di per sé non modifica il valore informativo, quindi $R_{\text{ingresso}} = R_{\text{uscita}}$ :
+\[R_{\text{ingresso codificatore}} = rH(X)= r_b\Omega(p) \leq r_b\]
+L'output del codificatore può essere visto come una nuova sorgente binaria che emette $r_b$ simboli/s, la cui entropia per simbolo è $\Omega(p)$.
+
+\subsection{Efficienza dei codici e ridondanza}
+Di una sorgente abbiamo il valore dell'entropia che ci indica il numero di simboli che in \textbf{media} servono per rappresentarne i simboli e la lunghezza media del codice scelto per codificare la sorgente; da questi due valori deriviamo l'efficienza del codice $\eta$ che :
+\[\eta = \frac{H_d(S)}{L_S(C)}\]
+
+L'efficienza $\eta$ indica quanto il codice si avvicina al limite di massima compressione. Un valore pari a 1 (100\%) significa che il codice è perfetto e non c'è alcuno spreco di simboli.
+
+Dal primo teorema di Shannon segue la relazione
+\[0 \leq \frac{H_d(S)}{L_S(C)} \leq 1\]
+
+Di riflesso, dall'efficienza si ottiene il valore della \textbf{ridondanza} del codice $\rho(C)$
+\[\rho(C) = 1 - \eta(C) = \frac{L_S(C) - H_d(S)}{L_S(C)}\]
+La ridondanza rappresenta la percentuale di \textit{bit sprecati} dal codice, ovvero i simboli usati in eccesso rispetto al minimo teorico indispensabile stabilito dall'entropia.
+
+Identifichiamo tre classi di efficienza per i codici:
+\begin{itemize}
+    \item Codice \textbf{assolutamente ottimo} $\rightarrow$ $L_S(C) = H(S)$
+    \item Codice \textbf{ottimo} $\rightarrow$ quando si ottiene il minimo valore possibile per $L_S(C)$, anche se maggiore dell'entropia della sorgente
+    \item Codice \textbf{sub-ottimo} $\rightarrow$ quando la lunghezza media è maggiore di quella di un codice ottimo per la stessa sorgente
+\end{itemize}
+
+\textbf{Nota:} Un codice può essere ottimo, ma non essere assolutamente ottimo (ovvero senza raggiungere l'entropia). Questo accade quasi sempre quando le probabilità non sono potenze di $\frac{1}{d}$.
+
+I rapporti $\frac{R}{r_b}$ e $\frac{H(S)}{L_S(C)} \leq 1$ sono \textit{equivalenti} in quanto:
+\[ R = r \cdot H(S) \quad r_b= r \cdot L_S(C) \implies \frac{r \cdot H(S)}{ r \cdot L_S(C)}= \frac{H(S)}{L_S(C)}= \eta\]
+Tale rapporto rappresenta una misura dell'efficienza di un codice ottimo o sub-ottimo.
+
+L'efficienza si definisce come
+\[\text{Efficienza } \% = \frac{H(S)}{L_S(C)} \cdot 100\]
+
+\subsubsection{Condizioni necessarie per codici assolutamente ottimi}
+Per essere \textbf{assolutamente ottimo} si deve avere che $K(C) = 1$ e quindi le probabilità dei simboli del codice sono tali che:
+\[p_i= \frac{1}{2^{l_i}} \space , \space i=1, 2, \dots m\]
+Pertanto un codice \textbf{assolutamente ottimo} avrà
+\[L_S(C) = -\log(p_i) = I_i \space\space I(\sigma_i) = \log_b\left(\frac{1}{p_i}\right)\]
+
+\begin{proof}
+Con $K(C)=1$ le distribuzioni di probabilità sono $\{2^{-l_i}\}$
+\begin{itemize}
+    \item \[p_i = \frac{1}{2^{l_i}} \rightarrow \log\frac{1}{p_i}= l_i\]
+    \item \[L_S(C) = \sum_{i=1}^{m}p_il_i = H(S)=\sum_{i=1}^{m}p_iI_i = \sum_{i=1}^{m}p_i\log\frac{1}{p_i}\] 
+\end{itemize}
+Ciò fa capire che la strategia da adottare per la codifica di sorgente consista nell'assegnare a simboli con probabilità più alta le parole di codice più corte rispetto ai simboli meno probabili.
+\end{proof}
+
+\subsubsection{Quando $L_S(C) = H_d(S)$?}
+Per un codice \textbf{UD} con alfabeto \textit{d-ario}, $L_S(C) = H(S) \iff \sum_{i=1}^{m}d^{-l_i}=1 \text{ e } l_i=\log_d\left(\frac{1}{p_i}\right)$.
+Questo può avvenire soltanto se gli $l_i$ hanno tutti un valore intero, ovvero $p_i = \left(\frac{1}{d}\right)^{\alpha_i}$,
+con $\alpha_i$ intero.
+Scegliendo $l_i=\alpha_i$, si ottiene un \textbf{codice compatto} e vale
+\begin{align*}
+1 = \sum_{i=1}^m p_i &= \sum_{i=1}^m \left(\frac{1}{d}\right)^{\alpha_i} \\
+                     &= \sum_{i=1}^m d^{-\alpha_i} = \sum_{i=1}^m d^{-l_i}
+\end{align*}
+
+\clearpage

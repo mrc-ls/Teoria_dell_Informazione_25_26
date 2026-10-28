@@ -1,0 +1,43 @@
+\begin{center}
+
+\resizebox{\textwidth}{!}{
+    \begin{tikzpicture}[
+        node distance=1.2cm,
+        block/.style={rectangle, draw, fill=blue!15, text width=2.2cm, align=center, minimum height=1.2cm, thick, rounded corners=2pt},
+        sum/.style={circle, draw, fill=gray!10, minimum size=6mm, thick, inner sep=0pt},
+        arrow/.style={-Stealth, thick},
+        label_txt/.style={font=\small\itshape, align=center, color=red}
+    ]
+
+        % Nodi principali
+        \node (input) {$\vec{u} = (u_1, \dots, u_k)$};
+        
+        \node [block, right=of input] (cc) {Codifica di \\ Canale (CC)};
+        
+        \node [right=of cc] (x) {$\vec{x} = (x_1, \dots, x_n)$};
+        
+        % Etichetta "parola trasmessa" sopra il vettore x
+        \node [above=0.3cm of x, label_txt] {parola \\ trasmessa};
+        
+        \node [block, right=of x] (chan) {Canale};
+        
+        % Nodo Somma per il Rumore (XOR)
+        \node [sum, right=of chan] (plus) {$+$};
+        
+        % Nodo Rumore (Input superiore)
+        \node [above=0.8cm of plus, color=red, font=\bfseries] (noise) {$\vec{e}$ (Rumore)};
+        
+        % Sequenza ricevuta
+        \node [ellipse, draw, fill=red!10, right=of plus, minimum height=1cm, align=center] (y) {$\vec{y} = (y_1, \dots, y_n)$ \\ \small seq. ricevuta};
+
+        % Connessioni
+        \draw [arrow] (input) -- (cc);
+        \draw [arrow] (cc) -- (x);
+        \draw [arrow] (x) -- (chan);
+        \draw [arrow] (chan) -- (plus);
+        \draw [arrow, color=red] (noise) -- (plus);
+        \draw [arrow] (plus) -- (y);
+
+    \end{tikzpicture}
+}
+\end{center}

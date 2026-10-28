@@ -1,0 +1,246 @@
+% =====================================================================
+% === 1. IMPOSTAZIONI DI BASE (Codifica, Font, Lingua, Layout)
+% =====================================================================
+% NOTA: l'ordine inputenc → fontenc → lmodern → babel è obbligatorio.
+
+\usepackage[utf8]{inputenc}   % Codifica sorgente UTF-8
+\usepackage[T1]{fontenc}      % Codifica output T1 (necessario per accentate, copia da PDF, ricerca)
+\usepackage{lmodern}          % Font Latin Modern in T1 (sostituisce i bitmap di default)
+\usepackage[italian]{babel}   % Supporto lingua italiana (sillabazione, didascalie, ecc.)
+\usepackage{microtype}  % aggiustamenti tipografici micro (elimina la maggior parte degli Overfull \hbox piccoli)
+
+\usepackage{geometry}
+\geometry{
+    a4paper,
+    margin     = 1in,
+    headheight = 14pt   % fancyhdr con font 11pt richiede almeno 13.6pt; geometry compensa topmargin
+}
+\raggedbottom   % non forza l'allineamento del fondo pagina (consigliato per documenti tecnici)
+
+% =====================================================================
+% === 2. LAYOUT: TITOLI, INTESTAZIONE E INDICE
+% =====================================================================
+
+\usepackage{titlesec}         % Personalizzazione stile titoli di capitolo/sezione
+
+%%%%%%%%% Stile dei titoli (allineati a sinistra, senza spaziatura verticale extra)
+\titleformat{\section}{\normalfont\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\normalfont\normalsize\bfseries}{\thesubsubsection}{1em}{}
+\titleformat{\paragraph}[runin]{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}[.]
+%%%%%%%%%
+
+
+\usepackage{fancyhdr}         % Intestazione e piè di pagina personalizzati
+\pagestyle{fancy}
+\fancyhf{}                    % Azzera header e footer predefiniti (evita duplicati)
+\fancyhead[LE,RO]{\thepage}           % Numero pagina: sinistra su pari, destra su dispari
+\fancyhead[RE]{\nouppercase{\leftmark}}  % Nome capitolo nelle pagine pari
+\fancyhead[LO]{\nouppercase{\rightmark}} % Nome sezione nelle pagine dispari
+\fancyfoot{}                  % Footer vuoto (il numero di pagina è già nell'header)
+
+% Profondità indice e numerazione sezioni (allineati allo stesso livello)
+\setcounter{tocdepth}{2}
+\setcounter{secnumdepth}{2}
+
+% =====================================================================
+% === 3. MATEMATICA E TEOREMI
+% =====================================================================
+
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools}        % Estensione di amsmath (es. \coloneqq, casi allineati)
+\usepackage{bm}               % Grassetto matematico (\bm{v} per vettori)
+
+% --- Stili degli ambienti teorema ---
+% "plain"  → testo in corsivo (per Teoremi, Lemmi, Proposizioni)
+% "definition" → testo normale (per Definizioni, Esempi)
+% "remark" → testo normale, titolo non in grassetto (per Osservazioni)
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Teorema}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposizione}
+\newtheorem{corollary}[theorem]{Corollario}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definizione}
+\newtheorem{example}[theorem]{Esempio}
+
+\theoremstyle{remark}
+\newtheorem*{osservazione}{Osservazione}
+
+% --- Comando per teoremi in stile libero (uso sconsigliato: non numerati né referenziabili) ---
+% Preferire gli ambienti sopra. Lasciato per retrocompatibilità con il documento esistente.
+\newcommand{\mytheo}[2]{%
+    \noindent \textbf{#1}\par #2 \par \vspace{1.5em}
+}
+
+% =====================================================================
+% === 4. COLORI
+% =====================================================================
+% xcolor va caricato prima di colortbl, tcolorbox e altri pacchetti che usano colori.
+
+\usepackage[table, xcdraw]{xcolor}
+
+% --- Palette colori del progetto ---
+\definecolor{tableheadbg}{gray}{0.90}
+\definecolor{tablerowblue}{rgb}{0.93, 0.95, 1.0}
+\definecolor{annotationred}{rgb}{0.8, 0, 0}
+
+% Colori per evidenziazione matrici
+\definecolor{matrixhighlight}{RGB}{200, 220, 240}
+\definecolor{matrixblue}{RGB}{210, 220, 240}
+\definecolor{matrixyellow}{RGB}{250, 250, 210}  % ← unica definizione (era duplicata)
+
+% Colori di sfondo generici
+\definecolor{LightMint}{HTML}{E0FFF0}
+\definecolor{CoolGray}{HTML}{EAEAEA}
+
+% --- Comandi scorciatoia per testo colorato ---
+\newcommand{\bluetext}[1]{\textcolor{blue}{#1}}
+\newcommand{\redtext}[1]{\textcolor{annotationred}{#1}}
+
+% =====================================================================
+% === 5. TABELLE
+% =====================================================================
+% Caricare dopo xcolor.
+
+\usepackage{colortbl}         % Celle e righe colorate (dipende da xcolor)
+\usepackage{booktabs}         % Tabelle professionali (\toprule, \midrule, \bottomrule)
+\usepackage{array}            % Formattazione avanzata colonne (es. >{...}c)
+\usepackage{multirow}         % Celle su più righe (\multirow)
+\usepackage{nicematrix}       % Matrici avanzate con TikZ integrato
+
+% =====================================================================
+% === 6. GRAFICA E FIGURE
+% =====================================================================
+
+\usepackage{graphicx}         % Inclusione immagini (\includegraphics)
+\usepackage{wrapfig}          % Testo che scorre attorno alle figure
+                              % ATTENZIONE: può dare problemi vicino a liste o float
+
+% NOTA: svg richiede Inkscape installato sulla macchina (non funziona su Overleaf di default).
+% Per disabilitarlo commentare la riga e usare immagini pre-convertite in PDF/PNG.
+\usepackage[inkscapelatex=false]{svg}
+
+% =====================================================================
+% === 7. BOX COLORATI (tcolorbox)
+% =====================================================================
+
+\usepackage{tcolorbox}
+\tcbuselibrary{skins, breakable} % Bordi avanzati e divisione automatica tra pagine
+
+% --- Box "Più in generale" (generalizzazione di un concetto) ---
+\newtcolorbox{generalizationbox}{
+    colback  = blue!5,
+    colframe = blue!50!black,
+    title    = {Più in generale},
+    fonttitle = \bfseries,
+    coltitle = black,
+    boxrule  = 0.8pt,
+    arc      = 3pt,
+    left=6pt, right=6pt, top=4pt, bottom=4pt
+}
+
+% --- Box "Esempio" con titolo variabile: \begin{esempio}{Titolo} ---
+\newtcolorbox{esempio}[1]{
+    enhanced,
+    breakable,
+    before skip = 12pt,
+    after skip  = 12pt,
+    boxrule     = 0.5pt,
+    left=8pt, right=8pt, top=8pt, bottom=8pt,
+    colback     = gray!5,
+    colframe    = gray!40,
+    sharp corners,
+    borderline west = {2pt}{0pt}{blue!70!black},
+    title       = \textbf{Esempio: #1},
+    coltitle    = blue!70!black,
+    attach title to upper,
+    after title = {\par\smallskip},
+    fontupper   = \small
+}
+
+% =====================================================================
+% === 8. GRAFICA VETTORIALE (TikZ)
+% =====================================================================
+
+\usepackage{tikz}
+
+% --- Librerie TikZ ---
+\usetikzlibrary{
+    arrows.meta,                  % Frecce avanzate (sintassi moderna: -Stealth)
+    positioning,                  % Posizionamento relativo (right=of nodo)
+    matrix,                       % Matrici di nodi
+    fit,                          % Nodi che racchiudono altri nodi
+    tikzmark,                     % Marcatori nel testo per connessioni TikZ
+    decorations.pathmorphing,     % Decorazioni di percorso (ondulato, ecc.)
+    decorations.pathreplacing,    % Decorazioni con sostituzione (brace, ecc.)
+    shapes,                       % Forme generiche
+    shapes.callouts,              % Fumetti
+    shapes.geometric,             % Forme geometriche (ellisse, diamante, ecc.)
+    calc                          % Calcoli su coordinate
+}
+
+% --- Stili globali TikZ ---
+\tikzset{
+    % FIX: usata la sintassi moderna di arrows.meta (Stealth maiuscolo, senza apostrofo)
+    edge/.style       = {->, >=Stealth, semithick},
+    labelstyle/.style = {auto, font=\small}
+}
+
+% =====================================================================
+% === 9. ALGORITMI E CODICE SORGENTE
+% =====================================================================
+
+\usepackage{algorithm}         % Ambiente float per algoritmi
+\usepackage{algpseudocode}     % Comandi per pseudocodice (if, for, while, ecc.)
+\usepackage{seqsplit}          % Spezza stringhe molto lunghe (es. sequenze di bit)
+
+\usepackage{listings}          % Inclusione codice sorgente con syntax highlighting
+\lstset{
+    basicstyle  = \ttfamily\small,   % Font monospazio, corpo leggermente ridotto
+    breaklines  = true,              % Manda a capo le righe troppo lunghe
+    frame       = single,            % Cornice attorno al codice
+    numbers     = left,              % Numeri di riga a sinistra
+    numberstyle = \tiny\color{gray}, % Numeri di riga in grigio
+    tabsize     = 4,
+    showstringspaces = false         % Non mostrare il simbolo ␣ nelle stringhe
+}
+
+% =====================================================================
+% === 10. UTILITÀ GENERALI
+% =====================================================================
+
+\usepackage{comment}           % Blocchi di commento multipagina (\begin{comment})
+\usepackage{enumitem}          % Liste personalizzabili (spaziatura, simboli, ecc.)
+\usepackage{etoolbox}
+\AtBeginEnvironment{algorithmic}{\setlist{}}  % isola enumitem dagli ambienti algoritmo
+\usepackage{placeins}          % \FloatBarrier per bloccare i float in una sezione
+\usepackage[normalem]{ulem}    % Sottolineature avanzate (\uline, \sout, ecc.)
+                               % [normalem] evita che ridefinisca \emph
+% NOTA: soul (\hl per evidenziare) e ulem ridefiniscono entrambi \underline internamente.
+% In caso di conflitti, commentare uno dei due e usare solo l'altro.
+\usepackage{soul}              % Evidenziazione (\hl), spaziatura lettere (\so)
+
+% =====================================================================
+% === 11. NOTE REDAZIONALI (todonotes)
+% =====================================================================
+
+
+% =====================================================================
+% === 11. RIFERIMENTI E LINK (ULTIMI DA CARICARE)
+% =====================================================================
+% hyperref va caricato quasi sempre per ultimo.
+% cleveref DEVE essere caricato dopo hyperref.
+
+\usepackage[
+    colorlinks = true,
+    linkcolor  = blue,
+    urlcolor   = blue,
+    citecolor  = blue
+]{hyperref}
+
+
+% Usare \cref{label} al posto di \ref{label}.
+\usepackage[italian]{cleveref}

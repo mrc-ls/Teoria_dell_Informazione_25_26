@@ -1,0 +1,165 @@
+\section{I Codici Algebrici}
+L'implementazione pratica di un codice a blocco sicuro ed efficiente non può basarsi su scelte casuali o sulla memorizzazione di dizionari sterminati. La soluzione risiede nell'introduzione di una rigorosa \textbf{struttura matematica}: nascono così i \textbf{codici algebrici}.
+L'idea fondamentale alla base di questi codici è dotare l'alfabeto dei simboli e l'insieme delle parole di codice di specifiche proprietà matematiche.
+In questo modo, le codeword faranno parte di strutture ben definite (come gruppi, campi o spazi vettoriali), e le operazioni di codifica e decodifica si trasformano in operazioni \textbf{algebriche} (come moltiplicazioni matriciali o calcoli polinomiali), facilmente implementabili in hardware o algoritmi software.
+
+Si assume che l'\textbf{alfabeto di canale} $\mathcal{A}$ sia un \textbf{campo finito (di Galois)}, indicato con $GF(q)$, dove $q=p^k$, con $p$ \textbf{numero primo} e $k \geq 1$. Il campo ha associate le operazioni di prodotto e somma tra i suoi elementi:
+\[\mathcal{A}=\{a_1,a_2,\dots,a_q\} \quad (\mathcal{A},+,*)\]
+
+\begin{esempio}{$GF(2):\quad \mathcal{A=\{0,1\}}, \space q=2$}
+\input{parte5/tabella_xor}
+\end{esempio}
+
+L'insieme $\mathcal{A}^n$ può essere dotato di una struttura di spazio vettoriale sul campo $GF(q)$
+\begin{itemize}
+    \item Prodotto:
+    \[s,u_i \in \mathcal{A}: s \cdot(u_1,\dots,u_n) =  (s*u_1,\dots, s*u_n) \in\mathcal{A}\]
+    \item Somma:
+    \[u_i,v_i \in \mathcal{A}:(u_1,\dots,u_n)+(v_1,\dots,v_n)= (u_1+v_1,\dots,u_n+v_n)\in \mathcal{A}\]
+\end{itemize}
+
+\begin{esempio}{$\mathcal{A}= \{0,1\},q=1,n=3$}
+\[x= 001,y=101 \in \mathcal{A}^3\]
+\[x+y= 100\]
+\[1 \cdot 101 = 101\]
+\[0 \cdot 101 = 000\]
+
+\end{esempio}
+
+\subsection{Richiami di Strutture Algebriche}
+%TODO:Breve recap delle definizioni base usate nelle slide (senza farne un trattato di matematica, solo l'essenziale per il corso):
+% - Gruppo e Gruppo Abeliano
+% - Campo (in particolare i Campi di Galois, GF(q))
+% - Spazio Vettoriale
+
+
+\section{Geometria dei Codici: Spazio e Distanza  di Hamming}
+Con spazio di \textbf{Hamming} si identifica lo spazio vettoriale delle sequenze $\mathcal{A}^n$. Nello spazio di Hamming differenti stringhe lunghe $n$ si considerano \textbf{adiacenti} se differiscono in una delle $n$ posizioni.
+La \textbf{Distanza di Hamming} $d_H(x,y)$ indica per quante posizioni le stringhe $x$ e $y$ differiscono.
+\[d_H(x,y) := \mid \{i:x_i\neq y_i\}\mid\]
+È una metrica:
+\begin{enumerate}
+\item $d_H(x,y)=0 \iff x = y$
+\item $d_H(x,y)=d_H(y,x)$
+\item $d_H(x,y)+d_H(y,z) \geq d_H(x,z)$
+\end{enumerate}
+
+\begin{esempio}{Distanze di Hamming}
+\[d_H(\textcolor{red}{0}0101,\textcolor{red}{1}0101)=1\]
+\[d_H(2\textcolor{red}{1}4\textcolor{red}{0}1\textcolor{red}{3},2\textcolor{red}{4}4\textcolor{red}{1}14)=3\]
+\end{esempio}
+
+\paragraph{Il Vettore di Errore}
+Consideriamo i vettori di ingresso e di uscita dal canale. Se trasmettiamo una parola $\vec{x}$ e il canale introduce del rumore indipendente sui singoli bit, riceveremo una sequenza alterata $\vec{y}$.
+Sia $\vec{e}$ il segnale di rumore (dove $e_i=0$ se il simbolo è ricevuto correttamente). Definiamo il \textbf{vettore di errore} $\vec{e}$ tale che:
+\[ \vec{y} = \vec{x} + \vec{e} \implies \vec{e} = \vec{y} - \vec{x} \]
+
+\begin{esempio}{Alfabeto Binario, lunghezza 5}
+Consideriamo un alfabeto binario $\mathcal{A}=\{0,1\}$ con parole di lunghezza $n=5$.
+\begin{itemize}
+    \item Trasmettiamo: $x = 01101$
+    \item Riceviamo: $y = 10101$
+    \item Il vettore errore risulta: $e = y - x = 11000$
+\end{itemize}
+\end{esempio}
+
+\paragraph{Peso di Hamming}
+Strettamente legato al concetto di distanza è il \textbf{Peso di Hamming}, indicato con $wt(x)$, che rappresenta semplicemente il numero di elementi non nulli presenti in un vettore $x$.
+Applicando questa definizione al vettore di errore $e = y - x$, emerge una proprietà fondamentale per l'analisi e la progettazione dei codici: \textbf{il peso del vettore errore, $\boldsymbol{wt(e)}$, indica esattamente il numero di errori commessi dal canale} durante la trasmissione.
+\[ d_H(x,y) = wt(y - x) = wt(e) \]
+
+\section{Criterio di decodifica a distanza minima}
+Con i concetti introdotti, si introduce il criterio di decodifica a distanza minima.
+Dato un messaggio $y \in \mathcal{A}^n$ in uscita dal canale, si decodifica con la parola $x \in \mathcal{A}$ tale per cui la distanza di Hamming tra le due risulta minima.
+
+\textbf{Proposizione}: Il criterio di decodifica a distanza minima corrisponde a un \textit{criterio di massima verosimiglianza}.
+\textbf{Dim:}
+Supponendo di usare lo schema a massima verosimiglianza in un canale BSC, si \textit{stima} $\tilde{x}=x$ se $p(y|x)= \max_{1\leq i \leq M}{p(y|x_i)}$. Si ha che
+\[p(y|x)= p(x + e|x)=p(e|x)= p(e)\]
+Sia $wt(e)$ il peso relativo al vettore di errore, allora:
+\[p(e) = \epsilon^{wt(e)}(1 - \epsilon)^{n -wt(e)}= (1-\epsilon)^n \left(\frac{\epsilon}{1-\epsilon}\right)^{wt(e)}\]
+Essendo $(1- \epsilon)^n$ una costante indipendente dal vettore d'errore, la massimizzazione dipende esclusivamente dal termine $\left(\frac{\epsilon}{1-\epsilon}\right)^{wt(e)}$.
+Assumendo che il canale sia "buono", ovvero che la probabilità di errore sul singolo bit sia $\epsilon < \frac{1}{2}$, si ottiene che la base dell'esponenziale è strettamente minore di $1$ $\left(\frac{\epsilon}{1-\epsilon} < 1\right)$. 
+Poiché stiamo elevando a potenza un numero minore di uno, per \textbf{massimizzare} l'intero termine (e quindi $p(y|x)$), è matematicamente necessario \textbf{minimizzare l'esponente} $wt(e)$.
+
+Ma $wt(e) = wt(y-x) = d_{H}(x,y)$; quindi bisogna \textbf{minimizzare $d_H(x,y)$} rispetto a x.
+
+\textbf{Osservazione:} la probabilità $p(e)$ è decrescente col peso di $e$; vettori di errore più \textit{leggeri} sono più probabili.
+
+\begin{esempio}{Codice a ripetizione binario $n=3$, $\mathcal{A}=\{0,1\}$}
+In questo codice, lo spazio di Hamming è un cubo tridimensionale avente $2^3 = 8$ vertici:
+\[\mathcal{A}^3= \{000,001,010,011,100,101,110,111\}, \quad C=\{000,111\}\]
+La decodifica a distanza minima partiziona questo cubo in due regioni $R_1$ e $R_2$, associando ogni vertice (sequenza ricevuta) alla parola di codice più vicina.
+%TODO: GRAFICO CUBO HAMMING
+\end{esempio}
+
+
+
+
+
+\section{Capacità di correzione del codice}
+
+Possiamo ora valutare le capacità di un codice.
+Introduciamo il concetto di \textbf{distanza minima del codice}: si tratta della distanza di Hamming minima tra tutte le coppie di codeword.
+\[d_{min} = \min_{x \neq x' \in C}{d_H(x,x')}\]
+
+Consideriamo quindi $S_t(x)$, la \textbf{sfera centrata} in $x$:
+\[S_t(x) = \{y \in q^n: d_H(x,y)\leq t\}\]
+In un codice \textit{ben progettato} le sfere di due parole saranno disgiunte:
+\[x \neq x'  \implies  S_t(x) \cap  S_t(x') = \emptyset \]
+L'idea è quella di avere le sfere centrate su ogni parola il più grandi possibile, in modo da \textit{intercettare} parole affette da errore ma sempre riconducibili alla parola inviata in origine sul canale. Un limite è però dato dal fatto che non si devono sovrapporre le sfere.
+Con $t$ indichiamo il raggio delle sfere, avremo quindi che:
+\[2t+1 \leq d_{min} \implies S_t(x) \cap S_t(x')= \emptyset\]
+Il vincolo è quindi determinato dal raggio $t$ di ogni sfera, ed è soddisfatto quando:
+\[t \leq \left\lfloor \frac{d_{min}-1}{2} \right\rfloor\]
+%%DIAGRAMMA SFERE%%
+Se soddisfatto, il vincolo garantisce che \textcolor{red}{ se $wt(e) \leq t$, allora la decodifica a distanza minima risulta corretta}.
+
+Se un codice $C$ ha distanza minima $d_{min}$, può correggere fino a $t$ errori, con 
+\[t \leq \left\lfloor \frac{d_{min}-1}{2} \right\rfloor \]
+Viceversa, se a un codice è richiesto di correggere \textbf{fino a} $t$ errori, allora deve valere:
+\[ d_{min}\geq 2t+1\]
+L'aggiunta di una unità alla somma dei raggi garantisce la disgiunzione tra le sfere.
+
+Dato $C$, codice binario, con distanza minima $d_{min}$, si ha che:
+\begin{enumerate}
+    \item $d_{min} = 2t+1 \implies$ $C$ corregge fino a $t$ errori.
+    \item $d_{min} = 2t \implies$ $C$ rileva $t$ errori e corregge \textbf{almeno} $t-1$ errori.
+\end{enumerate}
+
+\begin{esempio}{Codice a ripetizione su canale  BSC $n=3 \quad \mathcal{A}=\{0,1\}$}
+\begin{itemize}
+    \item \[\mathcal{A}^3 =\{000,001,010,011,100,101,110,111\}\]
+    \item \[d_{min}=3\]
+    \item $\left\lfloor \frac{d_{min}-1}{2} \right\rfloor = 1 \implies$ il codice corregge \textbf{tutte} le configurazioni di \textbf{un solo} errore
+\end{itemize}
+
+\input{parte5/tabella_rip_bsc}
+
+\end{esempio}
+
+Generalizzando, per un codice a ripetizione, la probabilità di errata decodifica è data da:
+\[P_e= Pr\{wt(e) \geq t+1\} =\sum_{i=t+1}^n\binom{n}{i}\epsilon^i(1-\epsilon)^{n-i}\]
+\begin{itemize}
+    \item $\binom{n}{i}$ quantifica le configurazioni di $i$ errori su una sequenza di $n$ simboli
+    \item $\epsilon^i(1-\epsilon)^{n-i}$ la probabilità che si verifichi una specifica sequenza di errore di peso $i$
+\end{itemize}
+
+Un codice a ripetizione corregge tutte e sole le $\sum_{i=1}^t\binom{n}{i}$ configurazioni di peso minore o uguale a $t$.
+\textbf{Prestazioni scadenti}:  con tasso di codice $k=1$
+\[R= \frac{k}{n}=\frac{1}{n} \to 0\]
+
+\textbf{Capacità di rilevazione ottima}: Rapportando la distanza minima alla lunghezza del blocco, il codice rileva il massimo numero possibile di errori (se si riceve una parola non apppartenente al codice, si sa con certezza che c'è stato errore).
+\[\lambda = \frac{d_{min}}{n} = \frac{n}{n} = 1\]
+
+\section{Codici perfetti}
+L'obiettivo nella progettazione di un codice è massimizzare la distanza minima $d_{min}$ (e quindi la capacità di correzione $t$) a parità di tasso del codice $R$ e lunghezza $n$, inserendo al contempo il maggior numero possibile $M$ di parole valide all'interno dello spazio $q^n$.
+
+Analizziamo il caso in cui lo spazio delle \textit{sfere} è sfruttato al massimo, quando si progetta un codice \textbf{\textit{perfetto}}
+\textbf{Definizione}:
+Un codice si definisce \textbf{perfetto} se l'unione di tutte le sfere di raggio $t$, delle $M$ parole di codice, riempie \textbf{esattamente} e \textbf{totalmente} l'intero spazio $q^n$ senza lasciare alcuna sequenza fuori da tali sfere e senza alcuna sovrapposizione tra di esse.
+
+\[\bigcup_{x \in C} S_t(x) \implies  M \left( \sum_{i=0}^t \binom{n}{i}(q-1)^i \right)= q^n\]
+
+Nello specifico, il termine all'interno della sommatoria, $\binom{n}{i}(q-1)^{i}$, calcola il numero di parole che si trovano all'interno della sfera di raggio $i$. Sono le parole di lunghezza $n$ in cui esattamente $i$ posizioni sono state modificate, scegliendo per ciascuna di esse uno dei restanti $(q-1)$ simboli possibili.
+

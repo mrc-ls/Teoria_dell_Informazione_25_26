@@ -1,0 +1,29 @@
+\begin{center}
+    % --- Minipage Sinistra: Matrice di Transizione ---
+    \begin{minipage}[c]{0.40\textwidth}
+        \centering
+        \renewcommand{\arraystretch}{1.8} % Spazio verticale per le frazioni
+        $P = \begin{bmatrix} 
+            1 & 0 \\ 
+            \frac{1}{2} & \frac{1}{2} 
+        \end{bmatrix}$
+    \end{minipage}
+    \hfill
+    % --- Minipage Destra: Diagramma del Canale ---
+    \begin{minipage}[c]{0.50\textwidth}
+        \centering
+        \begin{tikzpicture}[yscale=1.5, xscale=2, >=Stealth]
+            % Definizione nodi
+            \node (x0) at (0, 1) {$0$};
+            \node (x1) at (0, 0) {$1$};
+            \node (y0) at (1.5, 1) {$0$};
+            \node (y1) at (1.5, 0) {$1$};
+
+            % Frecce blu con etichette
+            \draw[->, blue, thick] (x0) -- node[above, black] {\small $1$} (y0);
+            \draw[->, blue, thick] (x1) -- node[above, pos=0.6, black] {\small $\frac{1}{2}$} (y0);
+            \draw[->, blue, thick] (x1) -- node[below, black] {\small $\frac{1}{2}$} (y1);
+            
+        \end{tikzpicture}
+    \end{minipage}
+\end{center}

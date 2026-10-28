@@ -1,0 +1,222 @@
+\part{Tecniche e Famiglie di Codici per il Controllo d'Errore}
+
+\chapter{Strategie Generali di Controllo e Correzione d'Errore}
+Grazie al Secondo Teorema di Shannon, abbiamo un contesto teorico ben solido per stabilire \textit{cosa} una codifica di canale può fare; rimane da analizzare \textit{come} (aspetto che la teoria di Shannon non affronta esplicitamente).
+Per quanto concerne le capacità di un codice di canale, sappiamo dare un limite al numero di errori che potranno essere rilevati o corretti. Oltre una certa soglia, dovremo accettare il rischio, che calcoleremo analiticamente, che la decodifica non rilevi un errore o lo corregga in modo erroneo.
+
+Per implementare questo controllo, si utilizzano i \textbf{Codici a Controllo d'Errore}, i quali introducono una ridondanza calcolata nel messaggio. A livello di sistema, questa ridondanza può essere sfruttata secondo tre strategie operative principali:
+
+\begin{itemize}
+    \item \textbf{Correzione degli errori (FEC - Forward Error Correction):} 
+    Il ricevitore utilizza la ridondanza per individuare e correggere autonomamente gli errori, a patto che il loro numero non superi la capacità di correzione del codice. È l'unica via percorribile quando non esiste un canale di ritorno (es. comunicazioni spaziali, broadcasting TV). Si deve però accettare il rischio di non riconoscere alcuni errori o di effettuare \textit{miscorrection} (correggere in modo errato, aggiungendo ulteriori errori a quelli del canale).
+    
+    \item \textbf{Rivelazione e Ritrasmissione (ARQ - Automatic Repeat Request):} 
+    Il ricevitore usa il codice solo per \textit{accorgersi} della presenza di un errore. Se un blocco risulta errato, lo scarta e sfrutta un canale di ritorno per chiedere al trasmettitore di reinviarlo (es. protocollo TCP). È una tecnica che garantisce una probabilità di errore residuo molto minore rispetto al FEC, ma richiede un canale bidirezionale e introduce ritardi (latenza) che devono essere accettabili per l'applicazione.
+    
+    \item \textbf{Strategie Miste (Hybrid ARQ):} 
+    Uniscono i vantaggi delle due tecniche precedenti. Effettuano una correzione parziale (limitata a un numero di errori facilmente gestibile) e ricorrono alla richiesta di ritrasmissione solo quando il canale degrada pesantemente e gli errori superano la soglia di correzione sicura del codice.
+\end{itemize}
+Indipendentemente dalla strategia di rete adottata (ARQ o FEC), i codici a controllo d'errore si dividono matematicamente in due grandi famiglie in base a come elaborano il flusso di dati in ingresso:
+\begin{itemize}
+    \item \textbf{Codici a Blocco:} Il flusso di dati viene diviso in blocchi di lunghezza fissa. A un blocco di $k$ cifre di informazione vengono aggiunte $(n-k)$ cifre di controllo (parità), calcolate in modo deterministico esclusivamente sulla base di quelle $k$ cifre. Non c'è memoria dei blocchi precedenti.
+    \item \textbf{Codici Convoluzionali:} Elaborano l'informazione come un flusso continuo. Le cifre di parità vengono generate non solo in base all'ultimo bit di informazione arrivato, ma dipendono da un numero prefissato di bit precedenti. Sono, a tutti gli effetti, codici dotati di "memoria".
+    \item \textbf{Codici Composti:} Combinano codici più semplici avvalendosi di tecniche di decodifica iterativa (es. codici concatenati e turbo-codici).
+\end{itemize}
+
+\section{Capacità di Rivelazione e Correzione}
+Introduciamo due metriche operative che misurano le prestazioni di un codice, oltre alla \textit{complessità realizzativa}.
+\begin{itemize}
+    \item{\textbf{Capacità di rilevazione:}} numero massimo di errori che può rilevare in una singola codeword 
+    \item{\textbf{Capacità di correzione:}} numero massimo di errori che può correggere in una singola codeword
+    \item{\textbf{Efficienza:}} equivale al \textbf{tasso del codice} $R=\frac{k}{n}$
+\end{itemize}
+
+
+\chapter{Codici a Blocco}
+I \textbf{codici a blocco} costituiscono una delle due famiglie principali dei codici a controllo d'errore. La loro caratteristica fondamentale è l'elaborazione dell'informazione in segmenti di lunghezza fissa, trattando ciascun blocco in modo del tutto indipendente da quelli adiacenti.
+
+\section{Principi Fondamentali dei Codici a Blocco}
+In un codice a blocco, il flusso di dati viene suddiviso in segmenti di lunghezza fissa pari a $k$ simboli (tipicamente bit). Il codificatore di canale associa a ciascun messaggio in ingresso un blocco di uscita di $n$ simboli, chiamato \textbf{parola di codice} (\textit{codeword}), dove $n > k$. Un codice di questo tipo viene indicato con la notazione $C\mathbf{(n, k)}$.
+Come già accennato, la composizione di un blocco di $n$ bit non è influenzata dai dati elaborati in precedenza (\textbf{assenza di memoria}).
+Nella pratica si predilige l'uso dei cosiddetti \textbf{codici sistematici}. In un codice a blocco sistematico, i $k$ bit di informazione originali non vengono mescolati o alterati, ma compaiono intatti (solitamente come prefisso o suffisso) all'interno della parola di codice lunga $n$, a cui vengono semplicemente accodati gli $(n-k)$ bit di parità.
+
+\section{Esempi Introduttivi di Codici a Blocco \textit{Lineari}}
+
+Prima di introdurre formalmente i vari tipi di codice, analizziamo due esempi introduttivi di codici a blocco, entrambi rientranti nella categoria dei \textbf{codici lineari}. In sintesi, la proprietà fondamentale dei codici lineari è che \textbf{ogni combinazione lineare di parole di codice produce un'altra parola di codice valida}. All'atto pratico, questo significa che le cifre di controllo vengono generate tramite semplici combinazioni lineari (somme modulo 2) dei bit di informazione: grazie a questa caratteristica, l'implementazione in hardware (basata su porte logiche XOR) risulterà estremamente semplice ed efficiente.
+
+\subsection{Codice a Ripetizione}
+Il codice a ripetizione è il più banale dei codici lineari e sistematici. La ridondanza si ottiene costruendo le codeword ripetendo  la trasmissione di un singolo bit di informazione $n$ volte, ottenendo una parola di codice di lunghezza $n$.
+\begin{align*}
+    0 \rightarrow & \ \textcolor{blue}{\overbrace{\textcolor{red}{000\dots00}}^{n}} \\
+    1 \rightarrow & \ \textcolor{red}{111\dots11}
+\end{align*}
+Quindi per i codici a ripetizione:
+\begin{itemize}
+    \item $k=1$
+    \item $q=n-k=n-1$
+    \item $R = \frac{1}{n}$
+\end{itemize}
+Alla ricezione di parole diverse da $000$ e $111$ si riconosce la presenza di errori, poi a seconda della strategia di codifica/decodifica scelta, è possibile:
+\begin{itemize}
+    \item Rilevare errori e chiedere ritrasmissione (strategia \textbf{ARQ});
+    \item Rilevare errori e correggerli (strategia \textbf{FEC});
+\end{itemize}
+
+\paragraph{Probabilità di errore}
+Assumendo che gli errori sui bit siano casuali con probabilità $P_{be}=\alpha \space (\alpha \ll 1)$, allora la probabilità che occorrano $i$ errori in una parola di $n$ bit è pari a:
+\[P(i,n)=\binom{n}{i}\alpha ^i(1- \alpha)^{n-i} \cong \binom{n}{i}\alpha ^i\]
+Quindi un codice a ripetizione sarà efficiente solo per $\alpha$ \textit{sufficientemente piccolo} da verificare la condizione
+\[P(i+1,n) \ll P(i,n)\]
+
+\paragraph{Esempio di codice a ripetizione}
+Consideriamo un codice a ripetizione $C(3,1)$
+\begin{itemize}
+    \item $n=3$
+    \item $k=1$
+    \item Codewords $<000,111>$
+\end{itemize}
+In ricezione si possono attuare sia la strategia ARQ che FEC.
+%RIVEDERE
+\input{parte5/parte5_tabella_1}
+Il decodificatore si accorgerà di qualsiasi configurazione con $1$ o $2$ errori (poiché generano sequenze miste non appartenenti al dizionario). L'unico caso critico è l'errore triplo, che trasforma una parola valida nell'altra parola valida.
+Pertanto, la probabilità $P_e$ di \textbf{non rilevare} la presenza di errori in una parola sarà
+\[P_e=P(3,3)=\binom{3}{3}\alpha^3 \quad  \textbf{Prob. di errata decodifica}\]
+\subsubsection{Correzione degli errori: Decodifica a Maggioranza}
+Se invece il sistema opera in modalità \textbf{FEC}, il ricevitore non scarta le parole errate, ma cerca di \textbf{stimare} il messaggio originale applicando il criterio di \textbf{Massima Verosimiglianza}. Per i codici a ripetizione su canale simmetrico, questo coincide con la \textbf{regola della maggioranza}: se una parola ricevuta non è una parola di codice, la si \textit{trasforma} nella codeword ad essa più \textit{vicina}, assumendo che almeno $\frac{(n+1)}{2}\space bit$ siano corretti.
+
+Con questa premessa possiamo correggere configurazioni con un singolo errore.
+
+Pertanto, la probabilità di \textbf{errata decodifica} $P_e$ sarà:
+\[P_e = \binom{3}{2}\alpha^2(1- \alpha) + \binom{3}{3}\alpha^3 = 3\alpha^2(1-\alpha) + \alpha^3 \cong 3\alpha^2\]
+
+
+\subsection{Codici a Controllo di Parità Singola (CCP)}
+Altra semplice codifica a blocco $(n,k)$ lineare e sistematica è quella dei codici a controllo di parità.
+
+Definiamo prima il concetto di \textit{parità}; una parola è detta con
+\begin{itemize}
+    \item parità \textbf{pari} se contiene un numero \textbf{pari} di bit $1$
+    \item parità \textbf{dispari} se contiene un numero \textbf{dispari} di bit $1$
+\end{itemize}
+In un $CCP(n,n-1)$ le parole di codice avranno $n-1$ bit di \textit{informazione} e $1$ bit di \textit{parità}, per una lunghezza totale di $n$ bit. Quest'ultimo bit viene scelto in modo tale che la parola di codice abbia la parità stabilita a priori per il codice.
+
+
+All'estremo opposto del codice a ripetizione troviamo il Codice a Controllo di Parità (CCP). In questo schema, a un blocco di $k$ bit di informazione viene aggiunto un singolo bit di ridondanza ($n = k+1$). Il tasso del codice risulta quindi molto alto: $R_c = \frac{k}{k+1}$.
+
+
+Come si comporta un $CCP(3,2)$?
+\input{parte5/parte5_tabella_2}
+
+\paragraph{Probabilità di rivelazione e limiti di correzione}
+Un CCP è in grado di rilevare un \textbf{numero dispari di errori}.
+La probabilità $P_{we}$ di \textbf{non} rilevare la presenza di errori in una parola, considerando una bassa probabilità di errore sui singoli bit  ($\alpha \ll 1$), è quindi data da:
+\[P_{we} = \sum_{\textbf{i pari}}^n P(i,n) \cong P(2,n)= \binom{n}{2}\alpha^2(1-\alpha)^{n-2} \cong \frac{n(n-1)}{2}\alpha^2 \]
+
+Un CCP così configurato \textbf{non può correggere errori}.
+Con $T$ identifichiamo il messaggio trasmesso, con $R$ il messaggio ricevuto dal canale:
+\begin{itemize}
+    \item $T =110001101000011010111010 \rightarrow$ $CCP=0$
+    \item $R =110001101\textcolor{red}{1}00011010111010 \rightarrow$ $CCP=1$
+\end{itemize}
+Errore rilevato ma non corretto!
+
+Se trasmettessimo un CCP per ogni bit trasmesso si avrebbe ad esempio:
+\[CCP_T= 110001101000011010111010=T \quad\text{doppia trasmissione di }T\]
+Si corregge qualsiasi errore, ma solamente con l'irrealistica ipotesi che i bit di parità siano tutti ricevuti \textbf{sempre} correttamente. La conseguenza, però è che bisogna trasmettere il \textbf{doppio} dei bit!
+
+\subsubsection{Si può fare di meglio? La Parità Multidimensionale}
+I CCP che abbiamo introdotto offrono un'ottima efficienza, ma non possono correggere nulla. Per trovare un compromesso migliore, possiamo disporre i bit di informazione in modo strutturato, applicando controlli di parità multipli.
+
+\textbf{Controllo di Parità Bidimensionale}: il messaggio $T$ viene diviso in due \textit{righe} e si calcolano i bit di parità per ogni colonna e per le due righe.
+\begin{center}
+\begin{tcolorbox}[
+    colframe=blue!75!black,
+    colback=white,
+    width=0.9\textwidth,
+    arc=4pt,
+    outer arc=4pt,
+    boxrule=0.8pt,
+    center,
+    % Didascalia integrata nel box
+    after title=\vspace{1em}, 
+    fontupper=\small,
+    after upper={
+        \vspace{1em}\hrule\vspace{0.5em}
+        \textit{\textbf{CCP(38,14):$R = \frac{24}{38}\approx 63.1\%$:} Se alla prima riga si riceve $1 1 0 0 0 1 1 0 1 \textcolor{red}{1} 0 0$, CCP della prima riga dovrebbe essere $0$ per la prima riga e $1$ nella decima colonna, l'errore è stato quindi individuato.}
+    }
+]
+    \centering
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabular}{r @{\hspace{1em}} c @{\hspace{1.5em}} l}
+        & \texttt{1 1 0 0 0 1 1 0 1 0 0 0} & CCP = 1 (12 bits) \\
+        $\oplus$ & \texttt{0 1 1 0 1 0 1 1 1 0 1 0} & CCP = 1 (12 bits) \\
+        \noalign{\vskip 2pt}
+        \arrayrulecolor{blue}\cline{2-2}
+        \noalign{\vskip 2pt}
+        CCP = & \texttt{1 0 \textcolor{blue}{0} 0 1 1 0 1 0 0 1 0} & \\
+    \end{tabular}
+\end{tcolorbox}
+\end{center}
+
+Si può migliorare ulteriormente? Sì, impostando il messaggio come una matrice il \textit{più quadrata} possibile.
+
+\begin{center}
+\begin{tcolorbox}[
+    colframe=blue!75!black,
+    colback=white,
+    width=0.85\textwidth,
+    arc=4pt,
+    boxrule=0.8pt,
+    center,
+    fontupper=\small,
+    after upper={
+        \vspace{1em}\hrule\vspace{0.5em}
+        \textit{\textbf{CCP(34,10):$R = \frac{24}{34}\approx 70.5\%$:} I 24 bit dati generano 4 bit di parità per le righe e 6 per le colonne. La ridondanza scende a $q = 10$, e l'efficienza del codice è migliorata rispetto all'esempio precedente.}
+    }
+]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    % Tabella: Operatore | Bit spaziati | Nota CCP
+    \begin{tabular}{r @{\hspace{1em}} c @{\hspace{2em}} l}
+                 & \texttt{1 1 0 0 0 1} & CCP 1 \\
+        $\oplus$ & \texttt{1 0 1 0 0 0} & CCP 0 \\
+        $\oplus$ & \texttt{0 1 1 0 1 0} & CCP 1 \\
+        $\oplus$ & \texttt{1 1 1 0 1 0} & CCP 0 \\
+        \noalign{\vskip 2pt}
+        \arrayrulecolor{blue}\cline{2-2}
+        \noalign{\vskip 2pt}
+        CCP =    & \texttt{1 1 1 0 0 1} & \\
+    \end{tabular}
+\end{tcolorbox}
+\end{center}
+
+\section{Struttura dei Codici a Blocco}
+%"codici a controllo di errore nelle slide lezione 18%
+Per poter analizzare e progettare codici complessi e più efficaci, è necessario definire formalmente i parametri di un sistema di codifica.
+Abbiamo già visto che la \textbf{ridondanza} è l'ingrediente fondamentale per garantire una maggiore resistenza al rumore.
+Questo pone una nuova problematica: \textit{come gestire} questa ridondanza?
+
+Da uno spazio, potenzialmente \textit{enorme} di possibili $q^n$ codeword, in un alfabeto con $q$ simboli, se ne scelgono solamente $M$, con $M< q^n$ come parole di codice legittime.
+
+Possiamo pensare di scegliere un valore di $M$ molto piccolo;
+questo migliorerà la capacità di correzione, ma la ridondanza risulterà penalizzante per l'efficienza del codice.
+Al contrario possiamo scegliere di favorire un buon tasso di codice $R$, ma questo penalizza la ridondanza e quindi la capacità di rilevare e correggere errori.
+Ma c'è un altro fattore, oltre alle dimensioni, di un codice che determina le sue prestazioni: la sua \textit{struttura}, ovvero \textbf{come} si scelgono le parole che lo compongono.
+Questo perché?
+
+Abbiamo visto come gli errori, in certi casi, portino il decodificatore a scambiare una codeword affetta da errori per un'altra legittima. Si capisce quindi come, per alleviare questo problema, si debbano \textit{distanziare} il più possibile le parole  per evitare il rischio di errata decodifica.
+
+\begin{figure}[H]
+    \centering
+    \includesvg[width=0.5\linewidth]{img5/spazio_codice}
+    \caption{Distribuzione parole su $q^n$}
+    \label{fig:placeholder}
+\end{figure}
+
+\begin{esempio}{}
+\[q=2, \space n=100, \space R=\frac{1}{2};\]
+Spazio delle \textbf{possibili} parole $\{0,1\}^n \Rightarrow 2^{100} \text{ parole}$.
+Quante parole di codice occorrono?
+\[M = 2^{nR}= 2^{50} \approx 10^{15}\]
+È necessario che le codeword siano legate da una struttura!
+\end{esempio}

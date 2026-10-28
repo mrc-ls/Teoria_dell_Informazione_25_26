@@ -1,0 +1,16 @@
+\begin{table}[htbp]
+\centering
+\begin{tabular}{|c|l|c|l|}
+\hline
+\textbf{Step} & \textbf{Sottostringa analizzata} & \textbf{Output $\langle I, C \rangle$} & \textbf{Nuova voce Dizionario} \\
+\hline
+1 & \texttt{C} (non presente) & $\langle 0, C \rangle$ & 1: \texttt{C} \\
+2 & \texttt{C} (pres.) $\to$ \texttt{CA} (non pres.) & $\langle 1, A \rangle$ & 2: \texttt{CA} \\
+3 & \texttt{C} (pres.) $\to$ \texttt{CC} (non pres.) & $\langle 1, C \rangle$ & 3: \texttt{CC} \\
+4 & \texttt{B} (non presente) & $\langle 0, B \rangle$ & 4: \texttt{B} \\
+5 & \texttt{CA} (pres.) $\to$ \texttt{CAB} (non pres.) & $\langle 2, B \rangle$ & 5: \texttt{CAB} \\
+6 & \texttt{CAB} (pres.) $\to$ \texttt{CABA} (non pres.)& $\langle 5, A \rangle$ & 6: \texttt{CABA} \\
+\hline
+\end{tabular}
+\caption{Processo di codifica LZ78 passo-passo}
+\end{table}

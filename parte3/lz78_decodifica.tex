@@ -1,0 +1,18 @@
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|l|l|}
+\hline
+\textbf{Step} & \textbf{Input $\langle I, C \rangle$} & \textbf{Stringa Emessa (Dict[$I$] + $C$)} & \textbf{Nuova voce Dizionario} \\
+\hline
+1 & $\langle 0, C \rangle$ & "" + \texttt{C} = \textbf{\texttt{C}} & 1: \texttt{C} \\
+2 & $\langle 1, A \rangle$ & \texttt{C} + \texttt{A} = \textbf{\texttt{CA}} & 2: \texttt{CA} \\
+3 & $\langle 1, C \rangle$ & \texttt{C} + \texttt{C} = \textbf{\texttt{CC}} & 3: \texttt{CC} \\
+4 & $\langle 0, B \rangle$ & "" + \texttt{B} = \textbf{\texttt{B}} & 4: \texttt{B} \\
+5 & $\langle 2, B \rangle$ & \texttt{CA} + \texttt{B} = \textbf{\texttt{CAB}} & 5: \texttt{CAB} \\
+6 & $\langle 5, A \rangle$ & \texttt{CAB} + \texttt{A} = \textbf{\texttt{CABA}} & 6: \texttt{CABA} \\
+\hline
+\multicolumn{4}{|c|}{\textbf{Output finale decodificato:} \texttt{CCACCBCABCABA}} \\
+\hline
+\end{tabular}
+\caption{Processo di decodifica LZ78 passo-passo}
+\end{table}

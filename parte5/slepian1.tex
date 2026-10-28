@@ -1,0 +1,27 @@
+\definecolor{rowblue}{HTML}{E3F2FD}
+\definecolor{headerblue}{HTML}{1565C0}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\small
+% --- TABELLA STANDARD GENERICA ---
+\begin{tabular}{|c|c|c|c|c|}
+    \hline
+    \rowcolor{white} $\vec{x}_0 = \vec{e}_0 = (0, \dots, 0)$ & $\vec{x}_1$ & $\vec{x}_2$ & $\dots$ & $\vec{x}_{2^k-1}$ \\ \hline
+    \rowcolor{rowblue} $\vec{e}_1$ & $\vec{x}_1 + \vec{e}_1$ & $\vec{x}_2 + \vec{e}_1$ & $\dots$ & $\vec{x}_{2^k-1} + \vec{e}_1$ \\ \hline
+    \rowcolor{white} $\vec{e}_2$ & $\vec{x}_1 + \vec{e}_2$ & $\vec{x}_2 + \vec{e}_2$ & $\dots$ & $\vec{x}_{2^k-1} + \vec{e}_2$ \\ \hline
+    \rowcolor{rowblue} \vdots & \vdots & \vdots & $\ddots$ & \vdots \\ \hline
+    \rowcolor{white} $\vec{e}_R$ & $\vec{x}_1 + \vec{e}_R$ & $\vec{x}_2 + \vec{e}_R$ & $\dots$ & $\vec{x}_{2^k-1} + \vec{e}_R$ \\ \hline
+\end{tabular}
+\quad
+% --- TABELLA SINDROMI ---
+\begin{tabular}{|c|}
+    \hline
+    \rowcolor{headerblue} \textcolor{white}{\textbf{Sindromi}} \\ \hline
+    \rowcolor{white} $S(0) = \mathbf{0}$ \\ \hline
+    \rowcolor{rowblue} $S(e_1)$ \\ \hline
+    \rowcolor{white} $S(e_2)$ \\ \hline
+    \rowcolor{rowblue} \vdots \\ \hline
+    \rowcolor{white} $S(e_R)$ \\ \hline
+\end{tabular}
+\end{center}

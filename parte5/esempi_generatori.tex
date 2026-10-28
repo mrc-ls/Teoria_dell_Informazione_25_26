@@ -1,0 +1,29 @@
+\definecolor{headergreen}{HTML}{1C714C}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.5} % Aumenta l'altezza delle celle
+\begin{tabular}{|c|c|c|c|c|r|}
+    \hline
+    % Riga di intestazione colorata
+    \rowcolor{headergreen} 
+    \textcolor{white}{\textbf{Codice}} & 
+    \textcolor{white}{\textbf{$n$}} & 
+    \textcolor{white}{\textbf{$k$}} & 
+    \textcolor{white}{\textbf{$R_c$}} & 
+    \textcolor{white}{\textbf{$d_{min}$}} & 
+    \textcolor{white}{\textbf{$G(p)$}} \\ \hline
+    
+    % Blocchi Hamming
+    \multirow{3}{*}{Hamming} & 7  & 4  & 0.57 & 3 & 1 011 \\ \cline{2-6}
+                             & 15 & 11 & 0.73 & 3 & 10 011 \\ \cline{2-6}
+                             & 31 & 26 & 0.84 & 3 & 100 101 \\ \hline
+                             
+    % Blocchi BCH
+    \multirow{3}{*}{BCH}     & 15 & 7  & 0.46 & 5 & 111 010 001 \\ \cline{2-6}
+                             & 31 & 21 & 0.68 & 5 & 11 101 101 001 \\ \cline{2-6}
+                             & 63 & 45 & 0.71 & 7 & 1 111 000 001 011 001 111 \\ \hline
+                             
+    % Golay
+    Golay                    & 23 & 12 & 0.52 & 7 & 101 011 100 011 \\ \hline
+\end{tabular}
+\end{center}

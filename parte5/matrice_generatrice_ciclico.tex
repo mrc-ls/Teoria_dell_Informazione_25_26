@@ -1,0 +1,37 @@
+\begin{center}
+\vspace{0.5cm} % <-- Riserva spazio per la graffa superiore
+\renewcommand{\arraystretch}{1.5}
+\[
+\mathbf{H} = 
+\begin{pNiceMatrix}[
+    margin, 
+    right-margin = 3.5cm, % Spazio vitale per le etichette esterne
+    columns-width = 6mm
+]
+    0 & \dots & 0 & h_k & h_{k-1} & \dots & h_0 \\
+    0 & \dots & h_k & h_{k-1} & \dots & h_0 & 0 \\
+    \vdots & \ddots & \ddots & \ddots & \ddots & \ddots & \vdots \\
+    h_k & h_{k-1} & \dots & h_1 & 0 & \dots & 0 
+    \CodeAfter
+    \begin{tikzpicture}[remember picture, overlay, blue, thick]
+        % 1. GRAFFA SUPERIORE (n-k)
+        \draw [decoration={brace, amplitude=5pt}, decorate] 
+            ([yshift=12pt]1-1.north west) -- ([yshift=12pt]1-3.north east)
+            node [midway, above=6pt, font=\small] {$n-k$};
+
+        % 2. GRAFFA INFERIORE (n colonne)
+        \draw [decoration={brace, amplitude=5pt, mirror}, decorate] 
+            ([yshift=-12pt]4-1.south west) -- ([yshift=-12pt]4-7.south east)
+            node [midway, below=8pt, font=\small, black] {$n \text{ colonne}$};
+
+        % 3. FRECCE E ETICHETTE ESTERNE
+        \begin{scope}[shorten <= 0pt, >=stealth]
+            \draw [<-] ([xshift=30pt]1-7.east) -- ++(1,0) node[right, font=\small] {$H^*(p)$};
+            \draw [<-] ([xshift=30pt]2-7.east) -- ++(1,0) node[right, font=\small] {$pH^*(p)$};
+            \draw [<-] ([xshift=30pt]4-7.east) -- ++(1,0) node[right, font=\small] {$p^{n-k-1}H^*(p)$};
+        \end{scope}
+    \end{tikzpicture}
+\end{pNiceMatrix}
+\]
+\vspace{0.8cm} 
+\end{center}
